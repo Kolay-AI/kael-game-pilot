@@ -11,7 +11,7 @@ import openai
 from six_agent_openai_bridge import SixAgentOpenAIBridge, SixAgentOpenAIConfig
 
 
-DEFAULT_HARD_MAX_MODEL_CALLS = 4
+DEFAULT_HARD_MAX_MODEL_CALLS = 6
 MAX_HARD_MODEL_CALLS = 100
 MIN_TIMEOUT_SECONDS = 1.0
 MAX_TIMEOUT_SECONDS = 120.0

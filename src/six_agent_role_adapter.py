@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import re
 from typing import Callable, Protocol, TypeVar
 
 from prompts import (
@@ -13,6 +14,12 @@ from prompts import (
 )
 from route_budget import DEFAULT_ROLE_LIMITS, RoleLimits
 from six_agent_contracts import (
+    ANALYST_MAX_CHARS,
+    ANALYST_MAX_WORDS,
+    IMPLEMENTER_MAX_CHARS,
+    IMPLEMENTER_MAX_WORDS,
+    PLANNER_MAX_CHARS,
+    PLANNER_MAX_WORDS,
     RoleContractError,
     build_chef_router_input,
     build_analyst_input,
@@ -36,6 +43,115 @@ from structured_routing import (
 
 class RoleAdapterError(RuntimeError):
     """Safe adapter failure that never includes prompts, outputs or provider details."""
+
+
+_DIAGNOSTIC_LAYERS = frozenset({"bridge", "adapter", "validator"})
+_DIAGNOSTIC_STATUSES = frozenset({"completed", "incomplete", "failed", "unknown"})
+_DIAGNOSTIC_REASONS = frozenset({
+    "completed", "empty_output", "IncompleteResponse", "InvalidResponse",
+    "Timeout", "Connection", "Authentication", "RateLimit", "APIStatus", "Unknown",
+    "provider_error", "invalid_result_contract", "validator_error", "valid_output",
+    "word_limit_exceeded", "char_limit_exceeded", "word_and_char_limit_exceeded",
+})
+_LIST_LINE = re.compile(r"^(?:[-*+]\s+|\d+[.)]\s+)")
+
+
+@dataclass(frozen=True)
+class SafeRoleDiagnostic:
+    role: ModelRole
+    layer: str
+    reason_code: str
+    response_status: str
+    output_empty: bool | None = None
+    output_char_count: int | None = None
+    output_word_count: int | None = None
+    word_limit_exceeded: bool | None = None
+    char_limit_exceeded: bool | None = None
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    total_tokens: int | None = None
+    markdown_codeblock_present: bool | None = None
+    list_structure_present: bool | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.role, ModelRole):
+            raise ValueError("Unbekannte Diagnose-Rolle.")
+        if self.layer not in _DIAGNOSTIC_LAYERS:
+            raise ValueError("Unbekannter Diagnose-Layer.")
+        if self.reason_code not in _DIAGNOSTIC_REASONS:
+            raise ValueError("Unbekannter Diagnosegrund.")
+        if self.response_status not in _DIAGNOSTIC_STATUSES:
+            raise ValueError("Unbekannter Response-Status.")
+        for value in (
+            self.output_char_count, self.output_word_count, self.input_tokens,
+            self.output_tokens, self.total_tokens,
+        ):
+            if value is not None and (
+                not isinstance(value, int) or isinstance(value, bool) or value < 0
+            ):
+                raise ValueError("Diagnosezähler müssen nichtnegative ganze Zahlen sein.")
+        for value in (
+            self.output_empty, self.word_limit_exceeded, self.char_limit_exceeded,
+            self.markdown_codeblock_present, self.list_structure_present,
+        ):
+            if value is not None and type(value) is not bool:
+                raise ValueError("Diagnoseflags müssen Boolean sein.")
+
+    def as_dict(self) -> dict[str, object]:
+        result: dict[str, object] = {
+            "role": self.role.value,
+            "layer": self.layer,
+            "reason_code": self.reason_code,
+            "response_status": self.response_status,
+            "word_limit_exceeded": self.word_limit_exceeded,
+            "char_limit_exceeded": self.char_limit_exceeded,
+        }
+        optional = {
+            "output_empty": self.output_empty,
+            "output_char_count": self.output_char_count,
+            "output_word_count": self.output_word_count,
+            "markdown_codeblock_present": self.markdown_codeblock_present,
+            "list_structure_present": self.list_structure_present,
+        }
+        result.update({key: value for key, value in optional.items() if value is not None})
+        if all(value is not None for value in (
+            self.input_tokens, self.output_tokens, self.total_tokens,
+        )):
+            result["usage"] = {
+                "input_tokens": self.input_tokens,
+                "output_tokens": self.output_tokens,
+                "total_tokens": self.total_tokens,
+            }
+        return result
+
+
+def build_safe_role_diagnostic(
+    *, role: ModelRole, layer: str, reason_code: str, response_status: str,
+    text: str | None = None, usage: "AdapterUsageData | None" = None,
+    word_limit: int | None = None, char_limit: int | None = None,
+) -> SafeRoleDiagnostic:
+    value = text.strip() if isinstance(text, str) else None
+    words = len(value.split()) if value is not None else None
+    chars = len(value) if value is not None else None
+    return SafeRoleDiagnostic(
+        role=role,
+        layer=layer,
+        reason_code=reason_code,
+        response_status=response_status,
+        output_empty=(not bool(value)) if value is not None else None,
+        output_char_count=chars,
+        output_word_count=words,
+        word_limit_exceeded=(words > word_limit) if words is not None and word_limit is not None else None,
+        char_limit_exceeded=(chars > char_limit) if chars is not None and char_limit is not None else None,
+        input_tokens=usage.input_tokens if usage is not None else None,
+        output_tokens=usage.output_tokens if usage is not None else None,
+        total_tokens=usage.total_tokens if usage is not None else None,
+        markdown_codeblock_present=("```" in value) if value is not None else None,
+        list_structure_present=(
+            any(_LIST_LINE.match(line.strip()) for line in value.splitlines())
+            if value is not None else None
+        ),
+    )
 
 
 @dataclass(frozen=True)
@@ -62,6 +178,7 @@ class AdapterUsageData:
 class AdapterGenerationResult:
     text: str
     usage: AdapterUsageData
+    diagnostic: SafeRoleDiagnostic | None = None
 
 
 class SixAgentRoleProvider(Protocol):
@@ -115,6 +232,41 @@ def _failure(reason: str, **count_updates: object) -> dict[str, object]:
         "next_agent": None,
         **count_updates,
     }
+
+
+_ROLE_TEXT_LIMITS: dict[ModelRole, tuple[int, int]] = {
+    ModelRole.PLANER: (PLANNER_MAX_WORDS, PLANNER_MAX_CHARS),
+    ModelRole.ANALYST: (ANALYST_MAX_WORDS, ANALYST_MAX_CHARS),
+    ModelRole.UMSETZER: (IMPLEMENTER_MAX_WORDS, IMPLEMENTER_MAX_CHARS),
+}
+
+
+def _validator_diagnostic(
+    role: ModelRole, text: str, usage: AdapterUsageData, *, valid: bool = False,
+    response_status: str = "completed",
+) -> SafeRoleDiagnostic:
+    limits = _ROLE_TEXT_LIMITS.get(role)
+    word_limit, char_limit = limits if limits is not None else (None, None)
+    stripped = text.strip() if isinstance(text, str) else ""
+    word_exceeded = word_limit is not None and len(stripped.split()) > word_limit
+    char_exceeded = char_limit is not None and len(stripped) > char_limit
+    if word_exceeded and char_exceeded:
+        reason = "word_and_char_limit_exceeded"
+    elif word_exceeded:
+        reason = "word_limit_exceeded"
+    elif char_exceeded:
+        reason = "char_limit_exceeded"
+    elif not stripped:
+        reason = "empty_output"
+    elif valid:
+        reason = "valid_output"
+    else:
+        reason = "validator_error"
+    return build_safe_role_diagnostic(
+        role=role, layer="validator", reason_code=reason,
+        response_status=response_status, text=text, usage=usage,
+        word_limit=word_limit, char_limit=char_limit,
+    )
 
 
 def _preflight(
@@ -191,20 +343,37 @@ def run_chef_router(
             SIX_AGENT_CHEF_ROUTER_SYSTEM_PROMPT,
             user_input,
         )
-    except Exception:
+    except Exception as exc:
+        diagnostic = getattr(exc, "safe_diagnostic", None)
+        if not isinstance(diagnostic, SafeRoleDiagnostic):
+            diagnostic = SafeRoleDiagnostic(
+                ModelRole.CHEF_ROUTER, "adapter", "provider_error", "unknown",
+            )
         return _failure(
             "Kontrollierter Providerfehler bei CHEF_ROUTER.",
             iteration_counts=counts,
             actual_call_count=call_number,
+            failure_diagnostic=diagnostic.as_dict(),
         )
     count_updates = {"iteration_counts": counts, "actual_call_count": call_number}
     if not isinstance(generated, AdapterGenerationResult) or not isinstance(
         generated.usage, AdapterUsageData,
     ):
+        count_updates["failure_diagnostic"] = SafeRoleDiagnostic(
+            ModelRole.CHEF_ROUTER, "adapter", "invalid_result_contract", "unknown",
+        ).as_dict()
         return _failure("Der Provider lieferte keinen gültigen Ergebnisvertrag.", **count_updates)
     try:
         route = validate_chef_router_output(generated.text)
     except (RoleContractError, StructuredOutputError, TypeError):
+        response_status = (
+            generated.diagnostic.response_status
+            if isinstance(generated.diagnostic, SafeRoleDiagnostic) else "completed"
+        )
+        count_updates["failure_diagnostic"] = _validator_diagnostic(
+            ModelRole.CHEF_ROUTER, generated.text, generated.usage,
+            response_status=response_status,
+        ).as_dict()
         return _failure("Die Ausgabe von CHEF_ROUTER war ungültig.", **count_updates)
     return {
         "chef_route": route,
@@ -216,6 +385,9 @@ def run_chef_router(
         "events": [{"node": ModelRole.CHEF_ROUTER.value, "call": call_number,
                     "status": "erfolgreich"}],
         "usage": [generated.usage.as_dict()],
+        "role_diagnostic": _validator_diagnostic(
+            ModelRole.CHEF_ROUTER, generated.text, generated.usage, valid=True,
+        ).as_dict(),
     }
 
 
@@ -241,17 +413,35 @@ def _run(
         return _failure("Erforderlicher Rolleninput fehlt oder ist ungültig.")
     try:
         generated = provider.generate(role, system_prompt, user_input)
-    except Exception:
+    except Exception as exc:
+        updates: dict[str, object] = {
+            "iteration_counts": counts, "actual_call_count": call_number,
+        }
+        diagnostic = getattr(exc, "safe_diagnostic", None)
+        if not isinstance(diagnostic, SafeRoleDiagnostic):
+            diagnostic = SafeRoleDiagnostic(role, "adapter", "provider_error", "unknown")
+        updates["failure_diagnostic"] = diagnostic.as_dict()
         return _failure(
             f"Kontrollierter Providerfehler bei {role.value}.",
-            iteration_counts=counts, actual_call_count=call_number,
+            **updates,
         )
     count_updates = {"iteration_counts": counts, "actual_call_count": call_number}
     if not isinstance(generated, AdapterGenerationResult) or not isinstance(generated.usage, AdapterUsageData):
+        count_updates["failure_diagnostic"] = SafeRoleDiagnostic(
+            role, "adapter", "invalid_result_contract", "unknown",
+        ).as_dict()
         return _failure("Der Provider lieferte keinen gültigen Ergebnisvertrag.", **count_updates)
     try:
         validated = validator(generated.text)
     except (RoleContractError, StructuredOutputError, TypeError):
+        response_status = (
+            generated.diagnostic.response_status
+            if isinstance(generated.diagnostic, SafeRoleDiagnostic) else "completed"
+        )
+        count_updates["failure_diagnostic"] = _validator_diagnostic(
+            role, generated.text, generated.usage,
+            response_status=response_status,
+        ).as_dict()
         return _failure(f"Die Ausgabe von {role.value} war ungültig.", **count_updates)
     update: dict[str, object] = {
         result_field: validated,
@@ -263,6 +453,14 @@ def _run(
         "events": [{"node": role.value, "call": call_number, "status": "erfolgreich"}],
         "usage": [generated.usage.as_dict()],
     }
+    response_status = (
+        generated.diagnostic.response_status
+        if isinstance(generated.diagnostic, SafeRoleDiagnostic) else "completed"
+    )
+    update["role_diagnostic"] = _validator_diagnostic(
+        role, generated.text, generated.usage, valid=True,
+        response_status=response_status,
+    ).as_dict()
     if extra_update is not None:
         update.update(extra_update(validated))
     return update

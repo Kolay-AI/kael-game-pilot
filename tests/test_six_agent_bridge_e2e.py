@@ -31,7 +31,7 @@ from six_agent_integration_graph import (  # noqa: E402
     run_six_agent_integration_workflow,
 )
 from six_agent_openai_bridge import (  # noqa: E402
-    SixAgentOpenAIBridge, SixAgentOpenAIConfig, chef_router_text_config,
+    SixAgentOpenAIBridge, SixAgentOpenAIConfig, role_text_config,
 )
 from six_agent_state import ModelRole  # noqa: E402
 from structured_routing import ReviewFailureOrigin as ReviewOrigin, validate_chef_route  # noqa: E402
@@ -102,9 +102,11 @@ def test_full_e2e_path_has_exact_requests_parameters_and_data_flow() -> None:
     for index, request in enumerate(captured):
         assert set(request) == {"model", "instructions", "input", "max_output_tokens", "reasoning",
                                 "text", "store", "parallel_tool_calls", "timeout"}
-        assert request["model"] == "gpt-5-mini-test" and request["max_output_tokens"] == 888
+        assert request["model"] == "gpt-5-mini-test"
+        expected_tokens = 1_600 if index == 3 else 888
+        assert request["max_output_tokens"] == expected_tokens
         assert request["reasoning"] == {"effort": "minimal"}
-        expected_text = chef_router_text_config() if index == 0 else {"verbosity": "low"}
+        expected_text = role_text_config(_roles(client)[index])
         assert request["text"] == expected_text
         assert request["store"] is False and request["parallel_tool_calls"] is False
         assert request["timeout"] == 29.5 and "tools" not in request

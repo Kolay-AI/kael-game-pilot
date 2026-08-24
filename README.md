@@ -151,6 +151,32 @@ im Quellcode gepflegt.
 Die temporären Dateien bleiben vorerst erhalten und werden in diesem Stabilisierungsschritt
 nicht gelöscht.
 
+## Sechs-Agenten-Integration
+
+Der providerneutrale Sechs-Agenten-Pfad verwendet `CHEF_ROUTER`, die dynamisch
+ausgewählten Fachrollen und einen deterministischen `CHEF_FINAL`. Ohne Live-Freigabe
+läuft der Einstieg ausschließlich mit dem lokalen Fake-Client:
+
+```powershell
+.\.venv\Scripts\python.exe .\src\six_agent_main.py
+```
+
+Der echte End-to-End-Pfad benötigt gleichzeitig das Runtime-Gate, das explizite
+CLI-Gate und einen ausschließlich über die Prozessumgebung injizierten API-Key:
+
+```powershell
+$env:MAS6_LIVE_ENABLED='true'
+$env:OPENAI_API_KEY='<DEIN_API_KEY>'
+.\.venv\Scripts\python.exe .\src\six_agent_main.py --live-six-agent --request '<AUFTRAG>'
+```
+
+Die Standardgrenze beträgt sechs Modellaufrufe, SDK-Retries sind deaktiviert und
+Korrekturpfade sind im CLI-Einstieg nicht freigegeben. `CHEF_ROUTER` liefert ein
+striktes Structured Output; anschließend validieren der bestehende Vertrag und das
+RouteBudget fail-closed. Routen mit einem Bedarf über sechs werden unmittelbar nach
+dem Router blockiert. Die Live-Zusammenfassung gibt weder Auftrag noch Modellantwort,
+Prompts, Schlüssel, Request-IDs oder rohe Exceptions aus.
+
 ## Abhängigkeiten
 
 - Python 3.12

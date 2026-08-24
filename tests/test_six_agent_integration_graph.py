@@ -98,6 +98,59 @@ def test_full_path_uses_all_five_adapters_once_without_double_counting() -> None
     _assert_counts(result, provider, roles)
 
 
+def test_kolay_kickoff_uses_route_d_once_and_finalizes_without_model_call() -> None:
+    request = (
+        "Plane und analysiere den technischen Start des Projekts KOLAY. Definiere "
+        "Architektur, zentrale Komponenten, Abhängigkeiten, Risiken und einen umsetzbaren "
+        "ersten Entwicklungsschritt. Danach soll eine erste technische Umsetzung erstellt, "
+        "getestet und unabhängig geprüft werden."
+    )
+    provider = _provider(
+        routers=(full_route_json(),), planners=("KOLAY-Plan",),
+        analysts=("KOLAY-Analyse",), implementers=("KOLAY-Erstumsetzung",),
+        testers=(_tester_json(),), reviewers=(_review_json(),),
+    )
+    roles = DeterministicIntegrationRoles()
+    config = IntegrationGraphConfig(
+        hard_max_model_calls=6,
+        global_correction_limit=0,
+        allowed_correction_paths=frozenset(),
+    )
+    result = run_six_agent_integration_workflow(request, provider, roles, config)
+    expected = [
+        ModelRole.CHEF_ROUTER, ModelRole.PLANER, ModelRole.ANALYST,
+        ModelRole.UMSETZER, ModelRole.TESTER, ModelRole.PRUEFER,
+    ]
+    assert _history(provider) == expected
+    assert result["required_call_budget"] == result["actual_call_count"] == 6
+    assert len(result["usage"]) == 6 and result["global_correction_count"] == 0
+    assert result["review_result"].entscheidung.value == "AKZEPTIERT"
+    assert result["status"] == "erfolgreich" and result["final_answer"] == "KOLAY-Erstumsetzung"
+    assert result["iteration_counts"].count(ModelRole.CHEF_FINAL) == 0
+    assert _nodes(result) == [role.value for role in expected] + ["FINALIZATION"]
+    router_input = provider.captured_requests[0][2]
+    assert request in router_input
+    assert all(marker not in request.lower() for marker in (
+        "planer=true", "analyst=true", "umsetzer=true", "tester=true", "pruefer=true",
+    ))
+    _assert_counts(result, provider, roles)
+
+
+@pytest.mark.parametrize("hard_limit", [6, 7, 20])
+def test_route_d_actual_workflow_stays_at_six_when_hard_limit_is_sufficient(hard_limit) -> None:
+    provider = _provider(
+        planners=("P",), analysts=("A",), implementers=("U",),
+        testers=(_tester_json(),), reviewers=(_review_json(),),
+    )
+    result, roles = _run(full_route_json(), provider, hard=hard_limit)
+    assert result["status"] == "erfolgreich"
+    assert result["required_call_budget"] == result["actual_call_count"] == 6
+    assert len(provider.call_history) == len(result["usage"]) == 6
+    assert result["global_correction_count"] == 0
+    assert result["iteration_counts"].count(ModelRole.CHEF_FINAL) == 0
+    _assert_counts(result, provider, roles)
+
+
 def test_tester_implementation_correction_exact_order_and_replacement() -> None:
     provider = _provider(planners=("Plan v1",), analysts=("Analyse v1",),
         implementers=("Umsetzung v1", "Umsetzung v2"),
@@ -221,6 +274,8 @@ def test_hard_limit_too_small_blocks_before_first_adapter() -> None:
     result, roles = _run(full_route_json(), provider, hard=4)
     assert _history(provider) == [ModelRole.CHEF_ROUTER] and roles.calls == []
     assert result["actual_call_count"] == 1 and result["status"] == "fehlgeschlagen"
+    assert result["required_call_budget"] == 6
+    assert result["chef_route"].planer and result["chef_route"].analyst
 
 
 def test_unbudgeted_tester_correction_blocks_before_reviewer() -> None:

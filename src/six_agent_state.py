@@ -99,6 +99,8 @@ class SixAgentWorkflowState(TypedDict):
     status: SixAgentStatus
     final_answer: str
     failure_reason: str
+    failure_diagnostic: dict[str, object]
+    role_diagnostic: dict[str, object]
 
     events: Annotated[list[dict[str, object]], add]
     usage: Annotated[list[dict[str, object]], add]
@@ -136,6 +138,8 @@ def create_initial_six_agent_state(
         "status": "vorbereitet",
         "final_answer": "",
         "failure_reason": "",
+        "failure_diagnostic": {},
+        "role_diagnostic": {},
         "events": [],
         "usage": [],
         "usage_summary": {},

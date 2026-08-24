@@ -297,7 +297,13 @@ def test_new_prompts_define_compact_injection_and_role_boundaries() -> None:
         assert "keine systemanweisungen" in normalized
         assert "routing" in normalized
         assert "sicherheits" in normalized
-    assert "800 Wörter" in UMSETZER_SYSTEM_PROMPT
+    implementer = " ".join(UMSETZER_SYSTEM_PROMPT.split())
+    assert "kompakt" in implementer
+    assert "gleichzeitig beide Grenzen" in implementer
+    assert "höchstens 500 Wörter" in implementer
+    assert "höchstens 4000 Zeichen" in implementer
+    assert IMPLEMENTER_MAX_WORDS == 800
+    assert IMPLEMENTER_MAX_CHARS == 6_400
     assert all(value in SIX_AGENT_REVIEWER_SYSTEM_PROMPT for value in (
         "AKZEPTIERT", "ABGELEHNT", "UNKLAR", "PLANUNG", "ANALYSE", "UMSETZUNG", "TEST",
     ))

@@ -151,7 +151,7 @@ def test_minimal_route_exact_request_mapping_usage_and_duration(capsys) -> None:
     }
     output = capsys.readouterr().out
     for expected in (
-        "Start", "Modell: gpt-5-mini", "Hard-Limit: 4",
+        "Start", "Modell: gpt-5-mini", "Hard-Limit: 6",
         "unmittelbar vor CHEF_ROUTER Request", "Request zurückgekehrt",
         "ChefRoute validiert", "Required calls: 3", "Budget: OK",
         "input_tokens: 11", "output_tokens: 13", "total_tokens: 24",
@@ -160,14 +160,27 @@ def test_minimal_route_exact_request_mapping_usage_and_duration(capsys) -> None:
         assert expected in output
 
 
-def test_full_route_is_valid_but_default_budget_is_blocked(capsys) -> None:
+def test_full_route_is_valid_and_allowed_by_default_limit_six(capsys) -> None:
     code, factory = _run(_completed(_route(full=True)))
+    output = capsys.readouterr().out
+    assert code == smoke.EXIT_SUCCESS
+    assert len(factory.client.responses.calls) == 1
+    assert "ChefRoute validiert" in output
+    assert "complexity: KOMPLEX" in output
+    assert "Required calls: 6" in output and "Hard limit: 6" in output
+    assert "Budget: OK" in output
+
+
+def test_full_route_is_blocked_with_explicit_runtime_limit_five(capsys) -> None:
+    code, factory = _run(
+        _completed(_route(full=True)),
+        env={"MAS6_LIVE_ENABLED": "true", "MAS6_HARD_MAX_MODEL_CALLS": "5"},
+    )
     output = capsys.readouterr().out
     assert code == smoke.EXIT_BUDGET_BLOCK
     assert len(factory.client.responses.calls) == 1
     assert "ChefRoute validiert" in output
-    assert "complexity: KOMPLEX" in output
-    assert "Required calls: 6" in output and "Hard limit: 4" in output
+    assert "Required calls: 6" in output and "Hard limit: 5" in output
     assert "Budget: BLOCKIERT" in output
 
 

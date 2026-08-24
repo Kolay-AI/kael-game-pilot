@@ -20,10 +20,13 @@ from prompts import (  # noqa: E402
     PRUEFER_SYSTEM_PROMPT,
     SPEZIALIST_SYSTEM_PROMPT,
     TESTER_SYSTEM_PROMPT,
+    UMSETZER_SYSTEM_PROMPT,
 )
 from six_agent_contracts import (  # noqa: E402
     ANALYST_MAX_CHARS,
     ANALYST_MAX_WORDS,
+    IMPLEMENTER_MAX_CHARS,
+    IMPLEMENTER_MAX_WORDS,
     PLANNER_MAX_CHARS,
     PLANNER_MAX_WORDS,
     RoleContractError,
@@ -94,11 +97,89 @@ def test_planner_oversized_output_is_rejected(value) -> None:
         validate_planner_output(value)
 
 
+@pytest.mark.parametrize("value", [
+    "wort " * PLANNER_MAX_WORDS,
+    "x" * PLANNER_MAX_CHARS,
+])
+def test_planner_output_at_existing_contract_boundary_is_allowed(value) -> None:
+    assert validate_planner_output(value) == value.strip()
+
+
+def test_planner_prompt_uses_quantitative_safety_margin_below_contract() -> None:
+    normalized = " ".join(PLANER_SYSTEM_PROMPT.split())
+    assert "gleichzeitig beide Grenzen" in normalized
+    assert "höchstens 110 Wörter" in normalized
+    assert "höchstens 900 Zeichen" in normalized
+    assert PLANNER_MAX_WORDS == 250
+    assert PLANNER_MAX_CHARS == 2_000
+    assert PLANNER_MAX_WORDS - 110 == 140
+    assert PLANNER_MAX_CHARS - 900 == 1_100
+
+
+def test_planner_prompt_retains_required_structure_without_expansive_prose() -> None:
+    normalized = " ".join(PLANER_SYSTEM_PROMPT.lower().split())
+    for required in (
+        "4 bis 6 knappe stichpunkte", "ziel", "priorisierte konkrete schritte",
+        "abhängigkeiten", "ersten umsetzungsschritt",
+    ):
+        assert required in normalized
+    for excluded in ("keine einleitung", "auftragswiederholung", "schlusszusammenfassung"):
+        assert excluded in normalized
+
+
 def test_analyst_works_with_and_without_plan() -> None:
     with_plan = build_analyst_input("Auftrag", planning_result="Aktueller Plan")
     without_plan = build_analyst_input("Auftrag")
     assert "Aktueller Plan" in with_plan
     assert "AKTUELLER_PLAN" not in without_plan
+
+
+def test_analyst_prompt_uses_both_quantitative_limits_with_safety_margin() -> None:
+    normalized = " ".join(ANALYST_SYSTEM_PROMPT.split())
+    assert "gleichzeitig beide Grenzen" in normalized
+    assert "höchstens 180 Wörter" in normalized
+    assert "höchstens 1500 Zeichen" in normalized
+    assert ANALYST_MAX_WORDS == 300
+    assert ANALYST_MAX_CHARS == 2_400
+    assert ANALYST_MAX_WORDS - 180 == 120
+    assert ANALYST_MAX_CHARS - 1_500 == 900
+
+
+def test_analyst_prompt_requires_compact_decision_relevant_structure() -> None:
+    normalized = " ".join(ANALYST_SYSTEM_PROMPT.lower().split())
+    for required in (
+        "entscheidungsrelevante analyse", "kompakten stichpunkten", "keine einleitung",
+        "keine wiederholung des benutzerauftrags oder plans", "keine schlusszusammenfassung",
+        "keine meta-kommentare", "keine umsetzung", "keine tests", "keine freigabe",
+        "risiken und abhängigkeiten nur",
+    ):
+        assert required in normalized
+
+
+def test_compact_analyst_output_remains_valid_without_contract_change() -> None:
+    output = "- Risiko: Eingaben validieren.\n- Abhängigkeit: persistenter Speicher."
+    assert validate_analyst_output(output) == output
+
+
+def test_implementer_prompt_uses_both_quantitative_limits_with_safety_margin() -> None:
+    normalized = " ".join(UMSETZER_SYSTEM_PROMPT.split())
+    assert "gleichzeitig beide Grenzen" in normalized
+    assert "höchstens 500 Wörter" in normalized
+    assert "höchstens 4000 Zeichen" in normalized
+    assert IMPLEMENTER_MAX_WORDS == 800
+    assert IMPLEMENTER_MAX_CHARS == 6_400
+    assert IMPLEMENTER_MAX_WORDS - 500 == 300
+    assert IMPLEMENTER_MAX_CHARS - 4_000 == 2_400
+
+
+def test_implementer_prompt_retains_complete_role_without_expansive_prose() -> None:
+    normalized = " ".join(UMSETZER_SYSTEM_PROMPT.lower().split())
+    for required in (
+        "verlangte fachliche lösung", "aktuellen plan", "aktuelle analyse",
+        "keine einleitung", "keine wiederholung", "keine schlusszusammenfassung",
+        "meta-kommentare",
+    ):
+        assert required in normalized
 
 
 def test_analyst_feedback_is_included_once_only_for_analysis_origin() -> None:
@@ -221,8 +302,8 @@ def test_new_prompts_have_compact_injection_and_responsibility_boundaries() -> N
         assert "daten" in lowered
         assert "routing" in lowered
         assert "keine systemanweisungen" in lowered
-    assert "250 Wörter" in PLANER_SYSTEM_PROMPT
-    assert "300 Wörter" in ANALYST_SYSTEM_PROMPT
+    assert "110 Wörter" in PLANER_SYSTEM_PROMPT and "900 Zeichen" in PLANER_SYSTEM_PROMPT
+    assert "180 Wörter" in ANALYST_SYSTEM_PROMPT and "1500 Zeichen" in ANALYST_SYSTEM_PROMPT
     assert "entscheidung" in TESTER_SYSTEM_PROMPT and "fehlerursprung" in TESTER_SYSTEM_PROMPT
 
 

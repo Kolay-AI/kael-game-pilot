@@ -137,6 +137,18 @@ def validate_chef_route(text: str) -> ChefRoute:
         raise StructuredOutputError("UMSETZER ist eine Pflichtrolle.")
     if not value["pruefer"]:
         raise StructuredOutputError("PRÜFER ist eine Pflichtrolle.")
+    complexity = _enum_value(Complexity, value["complexity"], "complexity")
+    reason_code = _enum_value(ChefReasonCode, value["reason_code"], "reason_code")
+    expected_optional_roles = {
+        ChefReasonCode.DIREKTE_UMSETZUNG: (False, False),
+        ChefReasonCode.PLANUNG_ERFORDERLICH: (True, False),
+        ChefReasonCode.ANALYSE_ERFORDERLICH: (False, True),
+        ChefReasonCode.VOLLSTAENDIGE_BEARBEITUNG: (True, True),
+    }[reason_code]
+    if (value["planer"], value["analyst"]) != expected_optional_roles:
+        raise StructuredOutputError(
+            "reason_code und die Rollenflags planer/analyst sind widersprüchlich."
+        )
     return ChefRoute(
         schema_version=1,
         planer=value["planer"],
@@ -144,8 +156,8 @@ def validate_chef_route(text: str) -> ChefRoute:
         umsetzer=True,
         tester=value["tester"],
         pruefer=True,
-        complexity=_enum_value(Complexity, value["complexity"], "complexity"),
-        reason_code=_enum_value(ChefReasonCode, value["reason_code"], "reason_code"),
+        complexity=complexity,
+        reason_code=reason_code,
     )
 
 

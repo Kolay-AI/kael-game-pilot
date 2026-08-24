@@ -18,7 +18,11 @@ from prompts import ANALYST_SYSTEM_PROMPT, PLANER_SYSTEM_PROMPT, TESTER_SYSTEM_P
 from route_budget import RoleLimits  # noqa: E402
 from six_agent_contracts import (  # noqa: E402
     ANALYST_MAX_CHARS,
+    ANALYST_MAX_WORDS,
+    IMPLEMENTER_MAX_CHARS,
+    IMPLEMENTER_MAX_WORDS,
     PLANNER_MAX_CHARS,
+    PLANNER_MAX_WORDS,
     build_analyst_input,
     build_planner_input,
     build_tester_input,
@@ -28,8 +32,12 @@ from six_agent_role_adapter import (  # noqa: E402
     AdapterUsageData,
     DeterministicRoleProvider,
     RoleAdapterConfig,
+    SafeRoleDiagnostic,
+    run_chef_router,
     run_analyst,
+    run_implementer,
     run_planner,
+    run_reviewer,
     run_tester,
 )
 from six_agent_state import ModelRole, SixAgentWorkflowState, create_initial_six_agent_state  # noqa: E402
@@ -59,6 +67,15 @@ def _tester_json(decision="BESTANDEN", origin="UNKLAR", improvements=None, **ext
         "begruendung": "Kurze Begründung",
         "verbesserungen": [] if improvements is None else improvements,
         **extra,
+    })
+
+
+def _review_json() -> str:
+    return json.dumps({
+        "entscheidung": "AKZEPTIERT",
+        "fehlerursprung": "UNKLAR",
+        "begruendung": "Akzeptiert",
+        "verbesserungen": [],
     })
 
 
@@ -92,6 +109,10 @@ def test_planner_valid_call_uses_exact_contract_and_updates_state() -> None:
     assert update["actual_call_count"] == 1
     assert update["iteration_counts"].planer == 1
     assert len(update["events"]) == len(update["usage"]) == 1
+    assert update["role_diagnostic"]["layer"] == "validator"
+    assert update["role_diagnostic"]["reason_code"] == "valid_output"
+    assert update["role_diagnostic"]["word_limit_exceeded"] is False
+    assert update["role_diagnostic"]["char_limit_exceeded"] is False
 
 
 def test_planner_feedback_once_and_context_isolation() -> None:
@@ -126,6 +147,141 @@ def test_planner_invalid_output_fails_closed_without_second_call(output) -> None
     assert update["actual_call_count"] == 1
     assert len(provider.call_history) == 1
     assert "planning_result" not in update
+
+
+@pytest.mark.parametrize(("output", "reason", "words", "chars"), [
+    ("wort " * (PLANNER_MAX_WORDS + 1), "word_limit_exceeded", True, False),
+    ("x" * (PLANNER_MAX_CHARS + 1), "char_limit_exceeded", False, True),
+    (
+        ("wort " * (PLANNER_MAX_WORDS + 1)) + ("x" * PLANNER_MAX_CHARS),
+        "word_and_char_limit_exceeded", True, True,
+    ),
+])
+def test_planner_limit_failure_has_only_safe_validator_metadata(
+    output, reason, words, chars,
+) -> None:
+    marker = "SECRET_OUTPUT_MARKER"
+    provider = _provider(ModelRole.PLANER, output + marker)
+    update = run_planner(_state(), provider)
+    diagnostic = update["failure_diagnostic"]
+    assert diagnostic["layer"] == "validator"
+    assert diagnostic["reason_code"] == reason
+    assert diagnostic["response_status"] == "completed"
+    assert diagnostic["word_limit_exceeded"] is words
+    assert diagnostic["char_limit_exceeded"] is chars
+    assert marker not in str(diagnostic)
+
+
+@pytest.mark.parametrize(("role", "runner", "limit_words", "limit_chars", "field"), [
+    (ModelRole.PLANER, run_planner, PLANNER_MAX_WORDS, PLANNER_MAX_CHARS, "planning_result"),
+    (ModelRole.ANALYST, run_analyst, ANALYST_MAX_WORDS, ANALYST_MAX_CHARS, "analysis_result"),
+    (ModelRole.UMSETZER, run_implementer, IMPLEMENTER_MAX_WORDS, IMPLEMENTER_MAX_CHARS,
+     "implementation_result"),
+])
+def test_bounded_text_roles_use_their_existing_contract_limits(
+    role, runner, limit_words, limit_chars, field,
+) -> None:
+    valid_update = runner(_state(), _provider(role, "- kompakt"))
+    assert valid_update[field]
+    assert valid_update["role_diagnostic"]["role"] == role.value
+    assert valid_update["role_diagnostic"]["word_limit_exceeded"] is False
+    assert valid_update["role_diagnostic"]["char_limit_exceeded"] is False
+
+    word_failure = runner(_state(), _provider(role, "wort " * (limit_words + 1)))
+    assert word_failure["failure_diagnostic"]["role"] == role.value
+    assert word_failure["failure_diagnostic"]["word_limit_exceeded"] is True
+    assert word_failure["failure_diagnostic"]["char_limit_exceeded"] is False
+
+    char_failure = runner(_state(), _provider(role, "x" * (limit_chars + 1)))
+    assert char_failure["failure_diagnostic"]["role"] == role.value
+    assert char_failure["failure_diagnostic"]["word_limit_exceeded"] is False
+    assert char_failure["failure_diagnostic"]["char_limit_exceeded"] is True
+
+
+def test_analyst_combined_limit_failure_is_classified_without_content() -> None:
+    marker = "ANALYST_SECRET_MARKER"
+    output = ("wort " * (ANALYST_MAX_WORDS + 1)) + ("x" * ANALYST_MAX_CHARS) + marker
+    update = run_analyst(_state(), _provider(ModelRole.ANALYST, output))
+    diagnostic = update["failure_diagnostic"]
+    assert diagnostic["role"] == ModelRole.ANALYST.value
+    assert diagnostic["reason_code"] == "word_and_char_limit_exceeded"
+    assert diagnostic["word_limit_exceeded"] is True
+    assert diagnostic["char_limit_exceeded"] is True
+    assert marker not in str(diagnostic)
+
+
+@pytest.mark.parametrize(("role", "runner", "valid_output"), [
+    (ModelRole.TESTER, run_tester, _tester_json()),
+    (ModelRole.PRUEFER, run_reviewer, _review_json()),
+])
+def test_structured_roles_never_invent_text_limits(role, runner, valid_output) -> None:
+    valid = runner(_state(), _provider(role, valid_output))
+    assert valid["role_diagnostic"]["role"] == role.value
+    assert valid["role_diagnostic"]["word_limit_exceeded"] is None
+    assert valid["role_diagnostic"]["char_limit_exceeded"] is None
+
+    invalid = runner(_state(), _provider(role, "{not-json SECRET_OUTPUT_MARKER"))
+    diagnostic = invalid["failure_diagnostic"]
+    assert diagnostic["role"] == role.value
+    assert diagnostic["reason_code"] == "validator_error"
+    assert diagnostic["word_limit_exceeded"] is None
+    assert diagnostic["char_limit_exceeded"] is None
+    assert "SECRET_OUTPUT_MARKER" not in str(diagnostic)
+
+
+def test_chef_router_invalid_output_has_no_artificial_text_limits() -> None:
+    update = run_chef_router(_state(), _provider(ModelRole.CHEF_ROUTER, "SECRET_BAD_JSON"))
+    diagnostic = update["failure_diagnostic"]
+    assert diagnostic["role"] == ModelRole.CHEF_ROUTER.value
+    assert diagnostic["reason_code"] == "validator_error"
+    assert diagnostic["word_limit_exceeded"] is None
+    assert diagnostic["char_limit_exceeded"] is None
+    assert "SECRET_BAD_JSON" not in str(diagnostic)
+
+
+@pytest.mark.parametrize(("role", "runner"), [
+    (ModelRole.PLANER, run_planner),
+    (ModelRole.ANALYST, run_analyst),
+    (ModelRole.UMSETZER, run_implementer),
+    (ModelRole.TESTER, run_tester),
+    (ModelRole.PRUEFER, run_reviewer),
+])
+def test_every_role_preserves_safe_provider_diagnostic_without_an_extra_call(role, runner) -> None:
+    safe = SafeRoleDiagnostic(role, "bridge", "InvalidResponse", "failed")
+    error = adapter_module.RoleAdapterError("SECRET_EXCEPTION")
+    error.safe_diagnostic = safe
+    provider = _provider(role, error)
+    update = runner(_state(), provider)
+    assert update["failure_diagnostic"] == safe.as_dict()
+    assert update["actual_call_count"] == 1
+    assert len(provider.call_history) == 1
+    assert "SECRET_EXCEPTION" not in str(update)
+
+
+def test_planner_generic_validator_failure_is_safe(monkeypatch) -> None:
+    def invalid(_output):
+        raise adapter_module.RoleContractError("SECRET_VALIDATOR_EXCEPTION")
+    monkeypatch.setattr(adapter_module, "validate_planner_output", invalid)
+    provider = _provider(ModelRole.PLANER, "```\n- SECRET_OUTPUT\n```")
+    update = run_planner(_state(), provider)
+    diagnostic = update["failure_diagnostic"]
+    assert diagnostic["layer"] == "validator"
+    assert diagnostic["reason_code"] == "validator_error"
+    assert diagnostic["markdown_codeblock_present"] is True
+    assert diagnostic["list_structure_present"] is True
+    assert "SECRET" not in str(diagnostic)
+
+
+def test_planner_provider_failure_has_safe_adapter_metadata() -> None:
+    provider = _provider(ModelRole.PLANER, RuntimeError("PROVIDER_SECRET"))
+    update = run_planner(_state(), provider)
+    assert update["failure_diagnostic"] == {
+        "role": "PLANER",
+        "layer": "adapter", "reason_code": "provider_error",
+        "response_status": "unknown",
+        "word_limit_exceeded": None, "char_limit_exceeded": None,
+    }
+    assert "PROVIDER_SECRET" not in str(update)
 
 
 @pytest.mark.parametrize("blocked", ["role", "budget", "hard"])

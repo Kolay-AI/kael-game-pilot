@@ -78,6 +78,49 @@ def test_valid_full_chef_route() -> None:
     assert route.planer and route.analyst and route.tester
 
 
+@pytest.mark.parametrize(("reason_code", "planer", "analyst"), [
+    ("DIREKTE_UMSETZUNG", False, False),
+    ("PLANUNG_ERFORDERLICH", True, False),
+    ("ANALYSE_ERFORDERLICH", False, True),
+    ("VOLLSTAENDIGE_BEARBEITUNG", True, True),
+])
+@pytest.mark.parametrize("tester", [False, True])
+def test_reason_code_has_exact_role_flags_while_tester_remains_optional(
+    reason_code: str, planer: bool, analyst: bool, tester: bool,
+) -> None:
+    route = validate_chef_route(_chef(
+        reason_code=reason_code, planer=planer, analyst=analyst, tester=tester,
+    ))
+    assert (route.planer, route.analyst, route.tester) == (planer, analyst, tester)
+
+
+@pytest.mark.parametrize(("reason_code", "planer", "analyst"), [
+    ("DIREKTE_UMSETZUNG", True, False),
+    ("DIREKTE_UMSETZUNG", False, True),
+    ("PLANUNG_ERFORDERLICH", False, False),
+    ("PLANUNG_ERFORDERLICH", True, True),
+    ("ANALYSE_ERFORDERLICH", False, False),
+    ("ANALYSE_ERFORDERLICH", True, True),
+    ("VOLLSTAENDIGE_BEARBEITUNG", False, True),
+    ("VOLLSTAENDIGE_BEARBEITUNG", True, False),
+])
+def test_contradictory_reason_code_and_role_flags_fail_closed(
+    reason_code: str, planer: bool, analyst: bool,
+) -> None:
+    with pytest.raises(StructuredOutputError, match="widersprüchlich"):
+        validate_chef_route(_chef(
+            reason_code=reason_code, planer=planer, analyst=analyst,
+        ))
+
+
+def test_router_enum_vocabulary_is_unchanged() -> None:
+    assert [item.value for item in Complexity] == ["EINFACH", "MITTEL", "KOMPLEX"]
+    assert [item.value for item in ChefReasonCode] == [
+        "DIREKTE_UMSETZUNG", "PLANUNG_ERFORDERLICH",
+        "ANALYSE_ERFORDERLICH", "VOLLSTAENDIGE_BEARBEITUNG",
+    ]
+
+
 @pytest.mark.parametrize("field", ["umsetzer", "pruefer"])
 def test_required_chef_roles_cannot_be_disabled(field: str) -> None:
     with pytest.raises(StructuredOutputError, match="Pflichtrolle"):

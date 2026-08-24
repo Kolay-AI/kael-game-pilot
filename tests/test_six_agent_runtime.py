@@ -67,7 +67,7 @@ def test_runtime_defaults_are_safe_and_immutable() -> None:
         provider_name="openai", live_enabled=False,
         hard_max_model_calls=DEFAULT_HARD_MAX_MODEL_CALLS,
     )
-    assert config.hard_max_model_calls == 4
+    assert config.hard_max_model_calls == 6
     with pytest.raises(FrozenInstanceError):
         config.model = "other"  # type: ignore[misc]
 

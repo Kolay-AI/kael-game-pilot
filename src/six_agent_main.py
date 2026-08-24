@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 import json
+import os
 import sys
 from typing import Mapping, Sequence
 
@@ -16,9 +17,12 @@ from six_agent_integration_graph import (
 )
 from six_agent_role_adapter import AdapterGenerationResult, SixAgentRoleProvider
 from six_agent_runtime import (
+    ClientFactory,
+    SixAgentClientCreationError,
     SixAgentRuntimeConfig,
     SixAgentRuntimeConfigError,
     create_six_agent_bridge,
+    create_six_agent_provider,
     load_nonsecret_runtime_config,
 )
 from six_agent_state import ModelRole, SixAgentWorkflowState
@@ -28,7 +32,6 @@ EXIT_SUCCESS = 0
 EXIT_CLI_OR_CONFIG = 2
 EXIT_SAFETY_BLOCK = 3
 EXIT_WORKFLOW_FAILURE = 4
-EXIT_LIVE_NOT_IMPLEMENTED = 5
 EXIT_INTERRUPTED = 130
 
 DEFAULT_OFFLINE_REQUEST = "Erstelle eine kurze technische Offline-Demolösung."
@@ -43,17 +46,23 @@ class OfflineCliResult:
     fake_request_count: int
 
 
+@dataclass(frozen=True)
+class LiveCliResult:
+    exit_code: int
+    state: SixAgentWorkflowState
+
+
 class _ArgumentParser(argparse.ArgumentParser):
     def error(self, message: str) -> None:
         raise ValueError("Die CLI-Argumente sind ungültig.")
 
 
 def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
-    parser = _ArgumentParser(description="Sicherer Offline-/Preflight-Einstieg für sechs Agenten")
-    parser.add_argument("--request", help="Benutzerauftrag; im Live-Preflight verpflichtend")
+    parser = _ArgumentParser(description="Sicherer Offline-/Live-Einstieg für sechs Agenten")
+    parser.add_argument("--request", help="Benutzerauftrag; im Live-Modus verpflichtend")
     parser.add_argument(
         "--live-six-agent", action="store_true",
-        help="zweites explizites Gate; führt derzeit ausschließlich den Preflight aus",
+        help="zweites explizites Gate für den vollständigen Live-Workflow",
     )
     parser.add_argument(
         "--demo-full-route", action="store_true",
@@ -191,7 +200,7 @@ def run_offline_cli(
     return OfflineCliResult(exit_code, state, len(client.responses.call_history))
 
 
-def _run_live_preflight(config: SixAgentRuntimeConfig, request: str | None) -> int:
+def _validate_live_preconditions(config: SixAgentRuntimeConfig, request: str | None) -> int | None:
     if not config.live_enabled:
         print("[KONFIGURATIONSFEHLER] Runtime-Live-Gate ist nicht aktiviert.", flush=True)
         print("[LIVE-PREFLIGHT] Kein Live-Aufruf ausgeführt", flush=True)
@@ -217,9 +226,62 @@ def _run_live_preflight(config: SixAgentRuntimeConfig, request: str | None) -> i
         print("[LIVE-PREFLIGHT] Sicherheitsgrenze blockiert bereits den Minimalpfad.", flush=True)
         print("[LIVE-PREFLIGHT] Kein Live-Aufruf ausgeführt", flush=True)
         return EXIT_SAFETY_BLOCK
-    print("[LIVE-PREFLIGHT] Secret-Gate: bewusst nicht geprüft; separate Injektion erforderlich", flush=True)
-    print("[LIVE-PREFLIGHT] Kein Live-Aufruf ausgeführt", flush=True)
-    return EXIT_LIVE_NOT_IMPLEMENTED
+    return None
+
+
+def run_live_cli(
+    runtime_config: SixAgentRuntimeConfig,
+    request: str,
+    *,
+    api_key: str,
+    client_factory: ClientFactory | None = None,
+) -> LiveCliResult:
+    graph_config = IntegrationGraphConfig(
+        hard_max_model_calls=runtime_config.hard_max_model_calls,
+        global_correction_limit=0,
+        allowed_correction_paths=frozenset(),
+    )
+    provider_kwargs = {"client_factory": client_factory} if client_factory is not None else {}
+    bridge = create_six_agent_provider(
+        api_key=api_key,
+        runtime_config=runtime_config,
+        second_gate_enabled=True,
+        **provider_kwargs,
+    )
+    provider = _SafetyReportingProvider(bridge, runtime_config, graph_config)
+    state = run_six_agent_integration_workflow(
+        request,
+        provider,
+        DeterministicIntegrationRoles(),
+        graph_config,
+        workflow_id="six-agent-cli-live",
+    )
+    total_tokens = sum(int(item.get("gesamt_tokens", 0)) for item in state["usage"])
+    print(f"[ZUSAMMENFASSUNG] Status: {state['status']}", flush=True)
+    print(f"[ZUSAMMENFASSUNG] Modellaufrufe: {state['actual_call_count']}", flush=True)
+    print(f"[ZUSAMMENFASSUNG] RouteBudget: {state['required_call_budget']}", flush=True)
+    print(f"[ZUSAMMENFASSUNG] Hard-Limit: {state['hard_max_model_calls']}", flush=True)
+    print(f"[ZUSAMMENFASSUNG] Tokens: {total_tokens}", flush=True)
+    if state["status"] == "erfolgreich":
+        print("[FERTIG] Live-Workflow erfolgreich abgeschlossen.", flush=True)
+        exit_code = EXIT_SUCCESS
+    elif state["required_call_budget"] > state["hard_max_model_calls"]:
+        print("[SICHERHEIT] Live-Workflow durch RouteBudget blockiert.", flush=True)
+        exit_code = EXIT_SAFETY_BLOCK
+    else:
+        print("[FEHLER] Live-Workflow kontrolliert fehlgeschlagen.", flush=True)
+        diagnostic = state.get("failure_diagnostic", {})
+        if isinstance(diagnostic, dict):
+            for name in (
+                "layer", "reason_code", "response_status", "output_empty",
+                "output_char_count", "output_word_count", "word_limit_exceeded",
+                "char_limit_exceeded", "markdown_codeblock_present",
+                "list_structure_present", "usage",
+            ):
+                if name in diagnostic:
+                    print(f"[DIAGNOSE] {name}: {diagnostic[name]}", flush=True)
+        exit_code = EXIT_WORKFLOW_FAILURE
+    return LiveCliResult(exit_code, state)
 
 
 def main(
@@ -227,6 +289,7 @@ def main(
     *,
     environment: Mapping[str, str] | None = None,
     prepared_responses: list[object] | None = None,
+    client_factory: ClientFactory | None = None,
 ) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -241,7 +304,31 @@ def main(
         if args.demo_full_route:
             print("[KONFIGURATIONSFEHLER] --demo-full-route ist ausschließlich offline erlaubt.", flush=True)
             return EXIT_CLI_OR_CONFIG
-        return _run_live_preflight(config, args.request)
+        preflight_exit = _validate_live_preconditions(config, args.request)
+        if preflight_exit is not None:
+            return preflight_exit
+        source = os.environ if environment is None else environment
+        api_key = source.get("OPENAI_API_KEY")
+        if not isinstance(api_key, str) or not api_key.strip():
+            print("[KONFIGURATIONSFEHLER] Für den Live-Betrieb fehlt der API-Key.", flush=True)
+            print("[LIVE-PREFLIGHT] Kein Live-Aufruf ausgeführt", flush=True)
+            return EXIT_CLI_OR_CONFIG
+        try:
+            return run_live_cli(
+                config,
+                args.request,
+                api_key=api_key,
+                client_factory=client_factory,
+            ).exit_code
+        except KeyboardInterrupt:
+            print("[ABGEBROCHEN] Benutzer hat den Live-Lauf beendet.", flush=True)
+            return EXIT_INTERRUPTED
+        except (SixAgentRuntimeConfigError, SixAgentClientCreationError):
+            print("[KONFIGURATIONSFEHLER] Live-Provider konnte nicht sicher erzeugt werden.", flush=True)
+            return EXIT_CLI_OR_CONFIG
+        except Exception:
+            print("[FEHLER] Live-Workflow konnte kontrolliert nicht ausgeführt werden.", flush=True)
+            return EXIT_WORKFLOW_FAILURE
 
     request = args.request if isinstance(args.request, str) and args.request.strip() else DEFAULT_OFFLINE_REQUEST
     try:

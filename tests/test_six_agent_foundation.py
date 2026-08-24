@@ -31,6 +31,12 @@ from structured_routing import parse_review_result, parse_tester_result, validat
 
 
 def _route(*, planer=False, analyst=False, tester=False):
+    reason_code = {
+        (False, False): "DIREKTE_UMSETZUNG",
+        (True, False): "PLANUNG_ERFORDERLICH",
+        (False, True): "ANALYSE_ERFORDERLICH",
+        (True, True): "VOLLSTAENDIGE_BEARBEITUNG",
+    }[(planer, analyst)]
     return validate_chef_route(json.dumps({
         "schema_version": 1,
         "planer": planer,
@@ -39,8 +45,37 @@ def _route(*, planer=False, analyst=False, tester=False):
         "tester": tester,
         "pruefer": True,
         "complexity": "KOMPLEX" if any((planer, analyst, tester)) else "EINFACH",
-        "reason_code": "VOLLSTAENDIGE_BEARBEITUNG" if any((planer, analyst, tester)) else "DIREKTE_UMSETZUNG",
+        "reason_code": reason_code,
     }))
+
+
+def test_route_d_budget_is_six_with_deterministic_finalizer_at_all_sufficient_limits() -> None:
+    route = _route(planer=True, analyst=True, tester=True)
+    for hard_limit in (6, 7, 20):
+        budget = calculate_route_budget(
+            route,
+            hard_max_model_calls=hard_limit,
+            global_correction_limit=0,
+            allowed_correction_paths=frozenset(),
+            http_attempts_per_call=1,
+            finalizer_is_model=False,
+        )
+        assert budget.base_calls == budget.required_calls == 6
+        assert budget.correction_calls == 0
+        assert budget.max_http_attempts == 6
+        assert budget.valid
+
+
+def test_route_d_budget_six_is_blocked_by_hard_limit_four() -> None:
+    budget = calculate_route_budget(
+        _route(planer=True, analyst=True, tester=True),
+        hard_max_model_calls=4,
+        global_correction_limit=0,
+        allowed_correction_paths=frozenset(),
+        http_attempts_per_call=1,
+        finalizer_is_model=False,
+    )
+    assert budget.required_calls == 6 and not budget.valid
 
 
 def test_initial_six_agent_state_is_valid_and_has_no_messages_history() -> None:

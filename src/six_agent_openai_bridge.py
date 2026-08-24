@@ -6,9 +6,15 @@ from typing import Any, Mapping, Protocol
 
 import openai
 
-from six_agent_role_adapter import AdapterGenerationResult, AdapterUsageData
+from six_agent_role_adapter import (
+    AdapterGenerationResult, AdapterUsageData, SafeRoleDiagnostic,
+    build_safe_role_diagnostic,
+)
 from six_agent_state import ModelRole
-from structured_routing import ChefReasonCode, Complexity
+from structured_routing import (
+    ChefReasonCode, Complexity, ReviewDecision, ReviewFailureOrigin,
+    TesterDecision, TesterFailureOrigin,
+)
 
 
 class BridgeErrorKind(str, Enum):
@@ -25,9 +31,13 @@ class BridgeErrorKind(str, Enum):
 class SixAgentBridgeError(RuntimeError):
     """Sanitized bridge error: never contains prompts, response text, IDs or SDK details."""
 
-    def __init__(self, kind: BridgeErrorKind, diagnostic: str = "") -> None:
+    def __init__(
+        self, kind: BridgeErrorKind, diagnostic: str = "",
+        safe_diagnostic: SafeRoleDiagnostic | None = None,
+    ) -> None:
         self.kind = kind
         self.diagnostic = diagnostic
+        self.safe_diagnostic = safe_diagnostic
         message = f"OpenAI-Bridgefehler; klasse={kind.value}"
         if diagnostic:
             message = f"{message}; {diagnostic}"
@@ -91,6 +101,52 @@ def chef_router_text_config() -> dict[str, object]:
     }
 
 
+def _result_text_config(
+    *, name: str, decisions: list[str], origins: list[str],
+) -> dict[str, object]:
+    return {
+        "verbosity": "low",
+        "format": {
+            "type": "json_schema",
+            "name": name,
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "entscheidung": {"type": "string", "enum": decisions},
+                    "fehlerursprung": {"type": "string", "enum": origins},
+                    "begruendung": {"type": "string"},
+                    "verbesserungen": {
+                        "type": "array", "items": {"type": "string"},
+                    },
+                },
+                "required": [
+                    "entscheidung", "fehlerursprung", "begruendung", "verbesserungen",
+                ],
+                "additionalProperties": False,
+            },
+        },
+    }
+
+
+def role_text_config(role: ModelRole) -> dict[str, object]:
+    if role is ModelRole.CHEF_ROUTER:
+        return chef_router_text_config()
+    if role is ModelRole.TESTER:
+        return _result_text_config(
+            name="tester_result",
+            decisions=[item.value for item in TesterDecision],
+            origins=[item.value for item in TesterFailureOrigin],
+        )
+    if role is ModelRole.PRUEFER:
+        return _result_text_config(
+            name="review_result",
+            decisions=[item.value for item in ReviewDecision],
+            origins=[item.value for item in ReviewFailureOrigin],
+        )
+    return {"verbosity": "low"}
+
+
 def _field(value: Any, name: str, default: Any = None) -> Any:
     if isinstance(value, Mapping):
         return value.get(name, default)
@@ -142,6 +198,27 @@ def _usage_values(response: Any) -> tuple[int, int, int, int]:
     details = _field(usage, "output_tokens_details")
     reasoning_tokens = int(_field(details, "reasoning_tokens", 0) or 0)
     return input_tokens, output_tokens, total_tokens, reasoning_tokens
+
+
+def _safe_response_status(response: Any) -> str:
+    status = _field(response, "status")
+    return status if status in {"completed", "incomplete", "failed"} else "unknown"
+
+
+def _structured_response_diagnostic(
+    response: Any, *, role: ModelRole, reason_code: str, text: str | None,
+) -> SafeRoleDiagnostic:
+    input_tokens, output_tokens, total_tokens, _ = _usage_values(response)
+    usage = AdapterUsageData(
+        role=role.value,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        total_tokens=total_tokens,
+    )
+    return build_safe_role_diagnostic(
+        role=role, layer="bridge", reason_code=reason_code,
+        response_status=_safe_response_status(response), text=text, usage=usage,
+    )
 
 
 def _safe_label(value: Any, default: str = "unbekannt") -> str:
@@ -259,17 +336,17 @@ class SixAgentOpenAIBridge:
     def generate(
         self, role: ModelRole, system_prompt: str, user_input: str,
     ) -> AdapterGenerationResult:
-        text_config = (
-            chef_router_text_config()
-            if role is ModelRole.CHEF_ROUTER
-            else {"verbosity": "low"}
+        text_config = role_text_config(role)
+        max_output_tokens = (
+            max(self.config.max_output_tokens, 1_600)
+            if role is ModelRole.UMSETZER else self.config.max_output_tokens
         )
         try:
             response = self._client.responses.create(
                 model=self.config.model,
                 instructions=system_prompt,
                 input=user_input,
-                max_output_tokens=self.config.max_output_tokens,
+                max_output_tokens=max_output_tokens,
                 reasoning={"effort": "minimal"},
                 text=text_config,
                 store=False,
@@ -284,7 +361,11 @@ class SixAgentOpenAIBridge:
                 if isinstance(exc, openai.APIStatusError)
                 else ""
             )
-            raise SixAgentBridgeError(_error_kind(exc), diagnostic) from None
+            kind = _error_kind(exc)
+            raise SixAgentBridgeError(
+                kind, diagnostic,
+                SafeRoleDiagnostic(role, "bridge", kind.value, "unknown"),
+            ) from None
 
         status = _field(response, "status")
         if status != "completed":
@@ -293,12 +374,21 @@ class SixAgentOpenAIBridge:
                 BridgeErrorKind.INCOMPLETE_RESPONSE
                 if status == "incomplete" else BridgeErrorKind.INVALID_RESPONSE
             )
-            raise SixAgentBridgeError(kind, diagnostic)
+            raise SixAgentBridgeError(
+                kind, diagnostic,
+                _structured_response_diagnostic(
+                    response, role=role, reason_code=kind.value,
+                    text=extract_visible_text(response),
+                ),
+            )
         text = extract_visible_text(response)
         if not text:
             raise SixAgentBridgeError(
                 BridgeErrorKind.INVALID_RESPONSE,
                 safe_response_diagnostic(response),
+                _structured_response_diagnostic(
+                    response, role=role, reason_code="empty_output", text="",
+                ),
             )
         input_tokens, output_tokens, total_tokens, _ = _usage_values(response)
         return AdapterGenerationResult(
@@ -310,5 +400,8 @@ class SixAgentOpenAIBridge:
                 input_tokens=input_tokens,
                 output_tokens=output_tokens,
                 total_tokens=total_tokens,
+            ),
+            diagnostic=_structured_response_diagnostic(
+                response, role=role, reason_code="completed", text=text,
             ),
         )

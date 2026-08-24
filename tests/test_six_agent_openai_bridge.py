@@ -34,7 +34,7 @@ from six_agent_openai_bridge import (  # noqa: E402
     SixAgentOpenAIConfig, chef_router_text_config, extract_visible_text,
 )
 from six_agent_role_adapter import (  # noqa: E402
-    run_analyst, run_implementer, run_planner, run_reviewer, run_tester,
+    SafeRoleDiagnostic, run_analyst, run_implementer, run_planner, run_reviewer, run_tester,
 )
 from six_agent_state import ModelRole, create_initial_six_agent_state  # noqa: E402
 
@@ -113,6 +113,67 @@ def test_request_mapping_is_exact_and_has_no_tools_or_extra_parameters() -> None
     assert "tools" not in client.responses.calls[0]
 
 
+def test_completed_planner_response_has_safe_content_free_diagnostic() -> None:
+    secret = "PLAN_RESPONSE_SECRET"
+    bridge, _ = _bridge(_completed(f"- Schritt eins\n- {secret}"))
+    result = bridge.generate(ModelRole.PLANER, "PROMPT_SECRET", "USER_SECRET")
+    diagnostic = result.diagnostic.as_dict()
+    assert diagnostic == {
+        "role": "PLANER",
+        "layer": "bridge", "reason_code": "completed",
+        "response_status": "completed", "output_empty": False,
+        "output_char_count": len(result.text), "output_word_count": 5,
+        "word_limit_exceeded": None, "char_limit_exceeded": None,
+        "usage": {"input_tokens": 3, "output_tokens": 4, "total_tokens": 7},
+        "markdown_codeblock_present": False, "list_structure_present": True,
+    }
+    assert all(marker not in str(diagnostic) for marker in (
+        secret, "PROMPT_SECRET", "USER_SECRET",
+    ))
+
+
+@pytest.mark.parametrize("role", list(ModelRole))
+def test_bridge_diagnostic_uses_actual_role_without_evaluating_contract_limits(role) -> None:
+    bridge, client = _bridge(_completed("- SAFE_VISIBLE_TEXT"))
+    diagnostic = bridge.generate(role, "PROMPT_SECRET", "USER_SECRET").diagnostic.as_dict()
+    assert diagnostic["role"] == role.value
+    assert diagnostic["layer"] == "bridge"
+    assert diagnostic["word_limit_exceeded"] is None
+    assert diagnostic["char_limit_exceeded"] is None
+    assert len(client.responses.calls) == 1
+    assert all(marker not in str(diagnostic) for marker in (
+        "SAFE_VISIBLE_TEXT", "PROMPT_SECRET", "USER_SECRET",
+    ))
+
+
+@pytest.mark.parametrize("role", list(ModelRole))
+@pytest.mark.parametrize(("response", "status", "reason"), [
+    (_completed(""), "completed", "empty_output"),
+    ({"status": "incomplete", "output_text": "PARTIAL_SECRET", "output": [],
+      "usage": {"input_tokens": 8, "output_tokens": 9, "total_tokens": 17}},
+     "incomplete", "IncompleteResponse"),
+    ({"status": "failed", "output_text": "FAILED_SECRET", "output": [],
+      "usage": {"input_tokens": 5, "output_tokens": 0, "total_tokens": 5}},
+     "failed", "InvalidResponse"),
+])
+def test_bridge_failures_have_safe_structured_diagnostic_for_actual_role(
+    response, status, reason, role,
+) -> None:
+    bridge, _ = _bridge(response)
+    with pytest.raises(SixAgentBridgeError) as caught:
+        bridge.generate(role, "PROMPT_SECRET", "USER_SECRET")
+    diagnostic = caught.value.safe_diagnostic.as_dict()
+    assert diagnostic["role"] == role.value
+    assert diagnostic["layer"] == "bridge"
+    assert diagnostic["response_status"] == status
+    assert diagnostic["reason_code"] == reason
+    assert diagnostic["word_limit_exceeded"] is None
+    assert diagnostic["char_limit_exceeded"] is None
+    assert all(marker not in str(diagnostic) for marker in (
+        "PARTIAL_SECRET", "FAILED_SECRET", "PROMPT_SECRET", "USER_SECRET",
+    ))
+
+
 def test_chef_router_request_uses_exact_strict_structured_output_schema() -> None:
     bridge, client = _bridge(_completed())
     bridge.generate(ModelRole.CHEF_ROUTER, "SYSTEM", "USER")
@@ -157,15 +218,47 @@ def test_chef_router_request_uses_exact_strict_structured_output_schema() -> Non
     assert len(client.responses.calls) == 1
 
 
-@pytest.mark.parametrize(
-    "role",
-    [ModelRole.PLANER, ModelRole.ANALYST, ModelRole.UMSETZER,
-     ModelRole.TESTER, ModelRole.PRUEFER],
-)
+@pytest.mark.parametrize("role", [ModelRole.PLANER, ModelRole.ANALYST])
 def test_non_router_roles_keep_plain_text_request_mapping(role: ModelRole) -> None:
     bridge, client = _bridge(_completed())
     bridge.generate(role, "SYSTEM", "USER")
     assert client.responses.calls[0]["text"] == {"verbosity": "low"}
+
+
+def test_implementer_gets_sufficient_output_budget_without_changing_config_default() -> None:
+    bridge, client = _bridge(_completed(), max_output_tokens=1_000)
+    bridge.generate(ModelRole.UMSETZER, "SYSTEM", "USER")
+    assert bridge.config.max_output_tokens == 1_000
+    assert client.responses.calls[0]["max_output_tokens"] == 1_600
+    assert client.responses.calls[0]["reasoning"] == {"effort": "minimal"}
+    assert len(client.responses.calls) == 1
+
+
+@pytest.mark.parametrize(("role", "name", "decisions", "origins"), [
+    (ModelRole.TESTER, "tester_result", ["BESTANDEN", "FEHLER"],
+     ["UMSETZUNG", "TEST", "UNKLAR"]),
+    (ModelRole.PRUEFER, "review_result", ["AKZEPTIERT", "ABGELEHNT", "UNKLAR"],
+     ["PLANUNG", "ANALYSE", "UMSETZUNG", "TEST", "UNKLAR"]),
+])
+def test_structured_roles_use_strict_responses_json_schema(role, name, decisions, origins) -> None:
+    bridge, client = _bridge(_completed())
+    bridge.generate(role, "SYSTEM", "USER")
+    text = client.responses.calls[0]["text"]
+    assert text["verbosity"] == "low"
+    assert text["format"]["type"] == "json_schema"
+    assert text["format"]["name"] == name
+    assert text["format"]["strict"] is True
+    schema = text["format"]["schema"]
+    assert schema["required"] == [
+        "entscheidung", "fehlerursprung", "begruendung", "verbesserungen",
+    ]
+    assert schema["additionalProperties"] is False
+    assert schema["properties"]["entscheidung"]["enum"] == decisions
+    assert schema["properties"]["fehlerursprung"]["enum"] == origins
+    assert schema["properties"]["begruendung"] == {"type": "string"}
+    assert schema["properties"]["verbesserungen"] == {
+        "type": "array", "items": {"type": "string"},
+    }
 
 
 def test_completed_output_text_and_object_usage_map_to_adapter_result() -> None:
