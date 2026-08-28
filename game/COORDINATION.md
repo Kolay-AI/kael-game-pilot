@@ -30,9 +30,16 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 ## Codex follow
 
 - GitHub Watch: All activity (on).
+- Playcheck: Codex implements + `node --test`. Mira plays http://127.0.0.1:8765/ and reports what is visible. Orion marks DONE only after that playcheck. Docs-only commits are not a playable change.
 - Local Codex task **Kael GitHub Coordination Monitor**: every 30 minutes, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
 
 ## Updates
+
+### 2026-08-29 — OPEN — P2 playcheck loop
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex implement P2 layout NOW on game-pilot (farmer clamp, brute pack stagger, boss not at 4130). Unit tests green is not enough. After push, write SHA + files + test result in game/CODEX.md. Playcheck is Mira at http://127.0.0.1:8765/ — Orion marks DONE only after that playcheck, never after docs-only commits.
 
 ### 2026-08-29 — APPROVED — Riven cycle-1 art locks
 - Commit: (this commit)
