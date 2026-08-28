@@ -4,16 +4,66 @@ Repo: https://github.com/Kolay-AI/kael-game-pilot
 Branch: `game-pilot`
 Playable slice: `game/`
 Source of truth: this file.
+No game-code changes in protocol commits. No merges without Orion + Codex alignment.
 
-## Protocol (2026-08-29)
+## Update protocol
 
-- Orion documents decisions, analysis, and status here, then commits to `game-pilot`.
-- Codex reviews new commits, tests, and diffs on `game-pilot`.
-- No merge or adoption without Orion + Codex alignment.
-- Gameplay changes: Codex implements after Orion approval. Orion may commit docs/tests/spec.
-- Status tags: OPEN / APPROVED / BLOCKED / DONE.
+Orion publishes every relevant stand as a commit on `game-pilot`. Each entry below uses this block:
 
-Watch the repo on GitHub (Watch -> All activity) to see new commits. Orion also checks `game-pilot` on weekday mornings.
+```
+### YYYY-MM-DD — STATUS — short title
+- Commit: <sha>
+- Files: <paths>
+- Tests: <command + result, or n/a for docs>
+- Next: <single next action>
+```
+
+STATUS is exactly one of: OPEN | APPROVED | BLOCKED | DONE.
+
+Codex follows by: git fetch + git log origin/game-pilot + this Updates section. Do not wait for a manual paste.
+
+## Setup Codex still needs (Orion cannot click this)
+
+1. GitHub Watch All activity (account that Codex/ChatGPT uses, usually Kolay-AI):
+   - Open https://github.com/Kolay-AI/kael-game-pilot
+   - Top right: Watch
+   - Choose All activity
+   Docs: https://docs.github.com/en/subscriptions-and-notifications/get-started/configuring-notifications
+
+2. ChatGPT/Codex scheduled check (required, because we commit to the branch and rarely open PRs):
+   - In the Kael Codex chat: ask ChatGPT to create a scheduled task.
+   - Prompt for the task: "Check https://github.com/Kolay-AI/kael-game-pilot branch game-pilot. Fetch or open commits + game/COORDINATION.md. If SHA or Board/Updates changed, summarize commit, files, tests, next action. If unchanged, stay silent. No code edits, no merge."
+   - Cadence: every 2 hours while working, or at least daily.
+   - Run in a worktree or read-only, not as a merge bot.
+   - ChatGPT web GitHub event-triggers watch pull requests, not plain branch pushes. A schedule is the reliable path for `game-pilot` commits.
+
+3. Optional: connect the GitHub app inside ChatGPT if a connect card appears, and grant Kolay-AI/kael-game-pilot.
+
+## Updates
+
+### 2026-08-29 — DONE — P0 win + P1 checkpoint
+- Commit: e36dfeb
+- Files: game/game.mjs, game/rules.mjs, game/tests/rules.test.mjs
+- Tests: 66/66 green (`node --test` under game/)
+- Next: overlay lock tests (done in c5f9d4e)
+
+### 2026-08-29 — DONE — Overlay locks
+- Commit: c5f9d4e
+- Files: game/tests/win-overlay.test.mjs
+- Tests: 2/2 green
+- Next: GitHub as channel (c1ac995)
+
+### 2026-08-29 — DONE — GitHub channel + board
+- Commit: c1ac995
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: this update-protocol commit (docs only)
+
+### 2026-08-29 — OPEN — Automatic follow for Codex
+- Commit: (this docs commit; SHA in git log after push)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Selcuk/Codex clicks Watch All activity + scheduled task. Vara and Riven reports still missing.
 
 ## Board
 
@@ -22,6 +72,7 @@ Watch the repo on GitHub (Watch -> All activity) to see new commits. Orion also 
 - P1 Checkpoint at x=3380 (after heal 3350, before gate 4300). Respawn at marker. Same commit `e36dfeb`.
 - Mira balance locks: `game/tests/balance-locks.test.mjs`.
 - Cycle-1 reports in: Mira, Kira, Nox, Auron.
+- Channel: GitHub `game-pilot` + this file.
 
 ### APPROVED (aligned, not started)
 - P2 Break pack 2480-3000: Brute solo; Farmer-2 and Animal-2 not same activation window.
@@ -36,6 +87,7 @@ Watch the repo on GitHub (Watch -> All activity) to see new commits. Orion also 
 - P3 Layout: three first-verb rooms before x=1050.
 - Small UX: double-jump caption; Arko "no target" on F no-op.
 - Story pass 2: thief, in-game mountain name, book origin.
+- Codex auto-follow: Watch + scheduled task (human click).
 
 ### BLOCKED
 - Audio bus + first assets (land/hurt/walk): waiting on Codex hook wiring after analysis.
@@ -58,6 +110,3 @@ Orion: Vara (design), Nox (story), Mira (QA/balancing), Riven (art), Auron (audi
 - Art is code-drawn placeholders
 - No audio bus yet
 - Not in repo: `Mesen2/`, `analysis/`
-
-## Cycle-1 notes
-See git history of this file for the long-form Mira/Kira/Nox/Auron notes. The board above is current.
