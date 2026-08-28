@@ -22,22 +22,10 @@ STATUS is exactly one of: OPEN | APPROVED | BLOCKED | DONE.
 
 Codex follows by: git fetch + git log origin/game-pilot + this Updates section. Do not wait for a manual paste.
 
-## Setup Codex still needs (Orion cannot click this)
+## Codex follow
 
-1. GitHub Watch All activity (account that Codex/ChatGPT uses, usually Kolay-AI):
-   - Open https://github.com/Kolay-AI/kael-game-pilot
-   - Top right: Watch
-   - Choose All activity
-   Docs: https://docs.github.com/en/subscriptions-and-notifications/get-started/configuring-notifications
-
-2. ChatGPT/Codex scheduled check (required, because we commit to the branch and rarely open PRs):
-   - In the Kael Codex chat: ask ChatGPT to create a scheduled task.
-   - Prompt for the task: "Check https://github.com/Kolay-AI/kael-game-pilot branch game-pilot. Fetch or open commits + game/COORDINATION.md. If SHA or Board/Updates changed, summarize commit, files, tests, next action. If unchanged, stay silent. No code edits, no merge."
-   - Cadence: every 2 hours while working, or at least daily.
-   - Run in a worktree or read-only, not as a merge bot.
-   - ChatGPT web GitHub event-triggers watch pull requests, not plain branch pushes. A schedule is the reliable path for `game-pilot` commits.
-
-3. Optional: connect the GitHub app inside ChatGPT if a connect card appears, and grant Kolay-AI/kael-game-pilot.
+- GitHub Watch: All activity (on).
+- Local Codex task **Kael GitHub Coordination Monitor**: every 4 hours, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
 
 ## Updates
 
@@ -59,11 +47,18 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - Tests: n/a docs
 - Next: this update-protocol commit (docs only)
 
-### 2026-08-29 — OPEN — Automatic follow for Codex
-- Commit: (this docs commit; SHA in git log after push)
+### 2026-08-29 — DONE — Automatic follow for Codex
+- Commit: 45995d4
 - Files: game/COORDINATION.md
 - Tests: n/a docs
-- Next: Selcuk/Codex clicks Watch All activity + scheduled task. Vara and Riven reports still missing.
+- Next: Watch + scheduled task (now on)
+
+### 2026-08-29 — DONE — Codex monitor active
+- Commit: (this docs commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: wait for Vara and Riven. No gameplay until then.
+
 
 ## Board
 
@@ -73,6 +68,7 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - Mira balance locks: `game/tests/balance-locks.test.mjs`.
 - Cycle-1 reports in: Mira, Kira, Nox, Auron.
 - Channel: GitHub `game-pilot` + this file.
+- Codex follow: Watch All activity + 4h local monitor (PC must be on).
 
 ### APPROVED (aligned, not started)
 - P2 Break pack 2480-3000: Brute solo; Farmer-2 and Animal-2 not same activation window.
@@ -87,7 +83,6 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - P3 Layout: three first-verb rooms before x=1050.
 - Small UX: double-jump caption; Arko "no target" on F no-op.
 - Story pass 2: thief, in-game mountain name, book origin.
-- Codex auto-follow: Watch + scheduled task (human click).
 
 ### BLOCKED
 - Audio bus + first assets (land/hurt/walk): waiting on Codex hook wiring after analysis.
@@ -110,3 +105,4 @@ Orion: Vara (design), Nox (story), Mira (QA/balancing), Riven (art), Auron (audi
 - Art is code-drawn placeholders
 - No audio bus yet
 - Not in repo: `Mesen2/`, `analysis/`
+
