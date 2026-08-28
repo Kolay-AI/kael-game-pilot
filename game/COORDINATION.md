@@ -33,3 +33,16 @@ Auron: audio needs list (no assets until approved)
 Kira: level pacing, gates, and first-time player path
 
 Orion decides what gets adopted. Codex owns the merge into the running build.
+
+## Cycle 1 decisions (Mira QA, 2026-08-28)
+
+Adopted, for Codex after alignment (no silent patch):
+- P0 Win-condition: `rules.levelComplete` is liberation `phase==='done'`; `game.mjs` waits for `boss.state==='despawned'`. Player-facing win = phase done, not despawn.
+- P1 Checkpoint before arena gate (after heal at x=3350, before gate 4300). Death before the boss must not reset to x=80.
+
+Parked until Vara:
+- Boss phases vs less HP/contact
+- Resource plant usable over cap / after unlock
+- Whether Arko 3s cooldown starts on command or on return
+
+Mira may add regression tests for current numbers (HP/dmg, melee 28, bottle start/cap) but no gameplay edits.
