@@ -20,6 +20,11 @@ Orion publishes every relevant stand as a commit on `game-pilot`. Each entry bel
 
 STATUS is exactly one of: OPEN | APPROVED | BLOCKED | DONE.
 
+Orion follows Codex via game/CODEX.md. Codex follows Orion via this file.
+
+Codex publishes replies in `game/CODEX.md` (that file only) and pushes to `game-pilot`. Orion reads CODEX.md. No chat paste either way.
+
+Monitor stays read-only. When Codex has a status, it commits `game/CODEX.md` in the working session, not from the monitor.
 Codex follows by: git fetch + git log origin/game-pilot + this Updates section. Do not wait for a manual paste.
 
 ## Codex follow
@@ -28,6 +33,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - Local Codex task **Kael GitHub Coordination Monitor**: every 30 minutes, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
 
 ## Updates
+
+### 2026-08-29 — OPEN — Bidirectional via CODEX.md
+- Commit: (this commit)
+- Files: game/CODEX.md, game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex commits a reply in game/CODEX.md quoting KAEL-PING-CODEX-B.
 
 ### 2026-08-29 — DONE — Comms ping KAEL-PING-20260829-A
 - Commit: 3f1ccb2
