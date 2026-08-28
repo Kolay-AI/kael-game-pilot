@@ -12,3 +12,5 @@ export function setCrouch(body,wantsCrouch,clearAbove=true){const standing=56,cr
 const LIBERATION_NEXT={crack:['cloud',1.1],cloud:['normal',.55],normal:['look',.8],look:['exit',1],exit:['done',0]};
 export function advanceLiberation(state,dt){if(state.phase==='alive'||state.phase==='done')return state;const remaining=Math.max(0,state.remaining-dt);if(remaining===0&&LIBERATION_NEXT[state.phase]){const[phase,next]=LIBERATION_NEXT[state.phase];return{phase,remaining:next}}return{...state,remaining}}
 export function levelComplete(bossLiberation){return bossLiberation.phase==='done'}
+export function playerWin(boss){return levelComplete(boss.liberation)}
+

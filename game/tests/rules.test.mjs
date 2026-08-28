@@ -1,4 +1,4 @@
-import test from'node:test';import assert from'node:assert/strict';import{RULES,damage,collectPage,applyPageUnlock,bottleHit,bottleEffectProfile,respawn,meleeCanHit,confusionCanStrike,tickCooldown,setCrouch,advanceLiberation,levelComplete}from'../rules.mjs';
+import test from'node:test';import assert from'node:assert/strict';import{RULES,damage,collectPage,applyPageUnlock,bottleHit,bottleEffectProfile,respawn,meleeCanHit,confusionCanStrike,tickCooldown,setCrouch,advanceLiberation,levelComplete,playerWin}from'../rules.mjs';
 test('Energie fällt nie unter null',()=>assert.equal(damage(10,15),0));
 test('dritte Seite schaltet Rezept frei',()=>assert.equal(collectPage(2).unlock,'FROST-MEISTERSCHAFT'));
 test('Flaschen haben verschiedene Wirkungen',()=>{const e={hp:100};assert.equal(bottleHit(e,'frost').hp,88);assert.equal(bottleHit(e,'ember').hp,62);assert.equal(bottleHit(e,'confusion').effect,'confusion')});
@@ -10,3 +10,5 @@ test('Ducken verkürzt Collider bei stabilen Füßen',()=>{const a={y:100,h:56};
 test('Seiten-Unlock wirkt exakt einmal und erhöht Kapazität',()=>{const a=applyPageUnlock({pages:3,pageUnlock:false,bottleCapacity:4,bottles:{frost:2,ember:4,confusion:4}});assert.deepEqual(a,{pages:3,pageUnlock:true,bottleCapacity:5,bottles:{frost:3,ember:5,confusion:5}});assert.strictEqual(applyPageUnlock(a),a)});
 test('Vor dritter Seite gibt es keinen Unlock',()=>{const a={pages:2,pageUnlock:false,bottleCapacity:4,bottles:{frost:4}};assert.strictEqual(applyPageUnlock(a),a)});
 test('Befreiungsphasen sind geordnet und Abschluss wartet auf Abgang',()=>{let s={phase:'crack',remaining:.1};const phases=[];for(const dt of[.1,1.1,.55,.8,1]){s=advanceLiberation(s,dt);phases.push(s.phase);assert.equal(levelComplete(s),s.phase==='done')}assert.deepEqual(phases,['cloud','normal','look','exit','done'])});
+ test('Player-facing Win hängt nicht vom Boss-Despawn ab',()=>{assert.equal(playerWin({state:'evacuating',liberation:{phase:'done'}}),true);assert.equal(playerWin({state:'despawned',liberation:{phase:'exit'}}),false)});
+
