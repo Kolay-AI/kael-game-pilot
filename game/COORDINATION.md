@@ -11,7 +11,7 @@ No game-code changes in protocol commits. No merges without Orion + Codex alignm
 Orion publishes every relevant stand as a commit on `game-pilot`. Each entry below uses this block:
 
 ```
-### YYYY-MM-DD — STATUS — short title
+### YYYY-MM-DD â€” STATUS â€” short title
 - Commit: <sha>
 - Files: <paths>
 - Tests: <command + result, or n/a for docs>
@@ -35,68 +35,73 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
-### 2026-08-29 — OPEN — P2 playcheck loop
+### 2026-08-29 — OPEN — HUD icons (Riven spec)
+- Commit: (this commit)
+- Files: game/game.mjs game/tests/art-upgrade.test.mjs
+- Tests: node --test tests/*.test.mjs → 76/76
+- Next: Mira playcheck at http://127.0.0.1:8765/ (hard reload). Riven confirm the HUD read: no ENERGIE/SEITEN/FROST/ARKO words, green flask+leaf, three bottles + yellow select frame, Arko bird dim on CD, page glyph + n/3. F8 untouched. Q/E/K/F unchanged.
+### 2026-08-29 â€” OPEN â€” P2 playcheck loop
 - Commit: (this commit)
 - Files: game/COORDINATION.md
 - Tests: n/a docs
-- Next: Codex implement P2 layout NOW on game-pilot (farmer clamp, brute pack stagger, boss not at 4130). Unit tests green is not enough. After push, write SHA + files + test result in game/CODEX.md. Playcheck is Mira at http://127.0.0.1:8765/ — Orion marks DONE only after that playcheck, never after docs-only commits.
+- Next: Codex implement P2 layout NOW on game-pilot (farmer clamp, brute pack stagger, boss not at 4130). Unit tests green is not enough. After push, write SHA + files + test result in game/CODEX.md. Playcheck is Mira at http://127.0.0.1:8765/ â€” Orion marks DONE only after that playcheck, never after docs-only commits.
 
-### 2026-08-29 — APPROVED — Riven cycle-1 art locks
+### 2026-08-29 â€” APPROVED â€” Riven cycle-1 art locks
 - Commit: (this commit)
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: Codex keep P2 layout-only and honor art constraints (no new tiles/biomes/sprites). Art must-haves after P2.
 
-### 2026-08-29 — APPROVED — Vara cycle-1 locks + P2 spec
+### 2026-08-29 â€” APPROVED â€” Vara cycle-1 locks + P2 spec
 - Commit: (this commit)
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: Codex implement P2 layout with farmer-1 activation clamp (must not wake across pit 700-820). Do not ship ammo/Arko-CD/boss-HP in this pass.
 
-### 2026-08-29 — APPROVED — Start P2 layout now
+### 2026-08-29 â€” APPROVED â€” Start P2 layout now
 - Commit: (this commit)
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: Codex implement the three P2 layout items on game-pilot. Keep tests green. No story/audio wiring. Do not wait on Vara/Riven for this pass.
 
-### 2026-08-29 — DONE — Bidirectional channel closed KAEL-PING-CODEX-B
+### 2026-08-29 â€” DONE â€” Bidirectional channel closed KAEL-PING-CODEX-B
 - Commit: 39990b4 (Codex reply), this ack
 - Files: game/CODEX.md, game/COORDINATION.md
 - Tests: n/a docs
 - Next: wait for Vara and Riven. No chat paste either way.
 
 
-### 2026-08-29 — DONE — Comms ping KAEL-PING-20260829-A
+### 2026-08-29 â€” DONE â€” Comms ping KAEL-PING-20260829-A
 - Commit: 3f1ccb2
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: wait for Vara and Riven. Channel works.
 
-### 2026-08-29 — DONE — P0 win + P1 checkpoint
+### 2026-08-29 â€” DONE â€” P0 win + P1 checkpoint
 - Commit: e36dfeb
 - Files: game/game.mjs, game/rules.mjs, game/tests/rules.test.mjs
 - Tests: 66/66 green (`node --test` under game/)
 - Next: overlay lock tests (done in c5f9d4e)
 
-### 2026-08-29 — DONE — Overlay locks
+### 2026-08-29 â€” DONE â€” Overlay locks
 - Commit: c5f9d4e
 - Files: game/tests/win-overlay.test.mjs
 - Tests: 2/2 green
 - Next: GitHub as channel (c1ac995)
 
-### 2026-08-29 — DONE — GitHub channel + board
+### 2026-08-29 â€” DONE â€” GitHub channel + board
 - Commit: c1ac995
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: this update-protocol commit (docs only)
 
-### 2026-08-29 — DONE — Automatic follow for Codex
+### 2026-08-29 â€” DONE â€” Automatic follow for Codex
 - Commit: 45995d4
 - Files: game/COORDINATION.md
 - Tests: n/a docs
 - Next: Watch + scheduled task (now on)
 
-### 2026-08-29 — DONE — Codex monitor active
+### 2026-08-29 â€” DONE â€” Codex monitor active
 - Commit: (this docs commit)
 - Files: game/COORDINATION.md
 - Tests: n/a docs
