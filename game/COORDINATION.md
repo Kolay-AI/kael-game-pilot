@@ -25,15 +25,15 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 ## Codex follow
 
 - GitHub Watch: All activity (on).
-- Local Codex task **Kael GitHub Coordination Monitor**: every 4 hours, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
+- Local Codex task **Kael GitHub Coordination Monitor**: every 30 minutes, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
 
 ## Updates
 
-### 2026-08-29 — OPEN — Comms ping KAEL-PING-20260829-A
-- Commit: bcb9221 plus this follow-up
+### 2026-08-29 — DONE — Comms ping KAEL-PING-20260829-A
+- Commit: 3f1ccb2
 - Files: game/COORDINATION.md
 - Tests: n/a docs
-- Next: Codex, reply with token KAEL-PING-20260829-A if you saw this without a chat paste. No game code.
+- Next: wait for Vara and Riven. Channel works.
 
 ### 2026-08-29 — DONE — P0 win + P1 checkpoint
 - Commit: e36dfeb
@@ -74,7 +74,7 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - Mira balance locks: `game/tests/balance-locks.test.mjs`.
 - Cycle-1 reports in: Mira, Kira, Nox, Auron.
 - Channel: GitHub `game-pilot` + this file.
-- Codex follow: Watch All activity + 4h local monitor (PC must be on).
+- Codex follow: Watch All activity + 30-minute local monitor (PC must be on).
 
 ### APPROVED (aligned, not started)
 - P2 Break pack 2480-3000: Brute solo; Farmer-2 and Animal-2 not same activation window.
