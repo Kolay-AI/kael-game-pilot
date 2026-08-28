@@ -34,11 +34,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
-### 2026-08-29 — OPEN — Bidirectional via CODEX.md
-- Commit: (this commit)
+### 2026-08-29 — DONE — Bidirectional channel closed KAEL-PING-CODEX-B
+- Commit: 39990b4 (Codex reply), this ack
 - Files: game/CODEX.md, game/COORDINATION.md
 - Tests: n/a docs
-- Next: Codex commits a reply in game/CODEX.md quoting KAEL-PING-CODEX-B.
+- Next: wait for Vara and Riven. No chat paste either way.
+
 
 ### 2026-08-29 — DONE — Comms ping KAEL-PING-20260829-A
 - Commit: 3f1ccb2
