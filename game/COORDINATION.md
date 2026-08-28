@@ -46,3 +46,16 @@ Parked until Vara:
 - Whether Arko 3s cooldown starts on command or on return
 
 Mira may add regression tests for current numbers (HP/dmg, melee 28, bottle start/cap) but no gameplay edits.
+
+## Cycle 1 decisions (Kira levels, 2026-08-28)
+
+First-run path is ground LTR spawn 80 to gate 4300. Pages 2/3 and Frost mastery are missed. No verb is taught. Dead: 80-530, 3150-4300. Dense: 700-1050 and 2480-3000 (Brute+Farmer-2+Animal-2).
+
+Adopted, no silent layout rewrite:
+- P1 Recovery corridor 3150-4300, then checkpoint; refill + look-at before the gate; do not wake the boss on the pit lip at 4130.
+- P2 Break pack 2480-3000: Brute solo; Farmer-2 and Animal-2 not in the same activation window.
+- P2 Wake farmer-1 only after pit 700-820.
+- P3 Next layout cycle: three first-verb rooms before x=1050 (DJ-only gap, bottle dummy, Arko perch). Frost mastery is not first-run prep.
+- Small UX: double-jump in the HTML caption; Arko short "no target" when F is a no-op.
+
+Tutorial room order waits on Vara.
