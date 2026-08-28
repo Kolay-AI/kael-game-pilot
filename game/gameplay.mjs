@@ -20,9 +20,8 @@ export function kaelBlinkState(time=0){const cycle=((Math.max(0,time)%4.6));retu
 export function canDoubleJump(p){return !!p&&!p.on&&!p.doubleJumpUsed&&p.hitTime<=0&&!p.duck}
 export function canMeleeDamage(player,enemyLastHit){return player.pose==='melee'&&player.attack>0&&animationPhase('melee',animationFrame('melee',player.animTime))==='active'&&player.attackId>0&&player.attackId!==enemyLastHit}
 export function kaelPose(p,axis,sprint){if(p.hitTime>0)return'hit';if(p.attack>0)return'melee';if(p.throwTime>0)return'throw';if(p.duck)return'crouch';if(p.doubleJumpTime>0)return'doubleJump';if(p.takeoffTime>0)return'takeoff';if(!p.on)return p.vy<0?'jumpUp':'fall';if(p.landTime>0)return'land';if(p.turnActive||p.turnTime>0)return'turn';if(axis||Math.abs(p.vx)>18)return sprint?'sprint':'walk';return'idle'}
-// Eight distinct contact/passing/push-off poses. Values are [leftX,leftY,rightX,rightY]
-// and deliberately move the boots through a full stride, rather than merely bobbing.
-const WALK_LEGS=[[-12,0,12,-4],[-9,-2,10,0],[-5,-4,7,0],[0,-5,3,0],[5,-3,-1,0],[9,-1,-6,0],[12,0,-10,-4],[10,0,-8,-2],[7,0,-5,-4],[3,0,0,-2],[-1,0,5,-1],[-7,0,10,-3]];
+// Walk 12: 0 contact L, 3 passing, 6 contact R, 9 passing. [leftX,leftY,rightX,rightY]. One planted foot every frame.
+const WALK_LEGS=[[-12,0,12,-4],[-10,0,11,-3],[-6,0,8,-2],[-2,-1,4,0],[4,-3,-3,0],[9,-1,-6,0],[12,-4,-12,0],[11,-3,-10,0],[8,-2,-6,0],[4,0,-2,-1],[-3,0,4,-3],[-8,0,10,-3]];
 const SPRINT_LEGS=[[-18,0,17,-8],[-14,-4,14,0],[-9,-8,10,0],[-3,-12,5,0],[4,-9,-1,0],[11,-3,-8,0],[17,0,-15,-8],[13,0,-12,-5],[8,0,-9,-9],[2,0,-3,-6],[-5,0,5,-3],[-12,0,13,-5]];
 // Right-run transfer: the planted leg carries the pelvis while the free thigh
 // passes through. These offsets are deliberately modest; the hip/belt overlap
