@@ -81,3 +81,8 @@ Proposal files in repo (not live yet):
 Codex merge must also replace hardcoded IDLE_SPEECH_LINES in game.mjs. JSON swap alone will not change the in-game bubbles.
 
 Parked for story pass 2: thief, mountain name in-game, book origin.
+
+## Cycle 1 decisions (Auron hooks, 2026-08-29)
+
+Hook contract v1 adopted: game/reference/AUDIO_HOOKS.md
+Codex analyzes and wires the bus later. No assets yet. ui_checkpoint and boss_gate are event-based so P1 layout can move them.
