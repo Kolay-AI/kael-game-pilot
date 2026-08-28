@@ -34,6 +34,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 — APPROVED — Start P2 layout now
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex implement the three P2 layout items on game-pilot. Keep tests green. No story/audio wiring. Do not wait on Vara/Riven for this pass.
+
 ### 2026-08-29 — DONE — Bidirectional channel closed KAEL-PING-CODEX-B
 - Commit: 39990b4 (Codex reply), this ack
 - Files: game/CODEX.md, game/COORDINATION.md
