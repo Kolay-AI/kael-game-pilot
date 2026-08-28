@@ -59,3 +59,13 @@ Adopted, no silent layout rewrite:
 - Small UX: double-jump in the HTML caption; Arko short "no target" when F is a no-op.
 
 Tutorial room order waits on Vara.
+
+## Cycle 1 decisions (Auron audio, 2026-08-28)
+
+Slice has no AudioContext. Adopted 10-min MUST set only. Shared-set (one boot, one impact, one glass) plus pitch variants. No 40-file library. No VO until Nox rewrites idle lines. Music is foothills/meadow, not mountain OST.
+
+MUST: walk/sprint steps, takeoff/land/doublejump, melee whoosh/impact, hurt/death, bottle throw + frost/ember/confusion breaks, Arko call/dive/hit-normal/hit-boss, liberation crack/cloud/sting, boss gate-stinger, explore-loop, mini-boss-loop from gate, silence during liberation, 4-8s win, page/unlock/heal/checkpoint UI.
+
+Parked: skid, void-fall, whiff, status loops, Arko-ready chirp, ambient birds, energy-low.
+
+Assets wait. Next: Auron writes the cue-name hook contract, Codex wires the bus, then first asset wave is Land + Hurt + Walk.
