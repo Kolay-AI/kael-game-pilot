@@ -69,3 +69,15 @@ MUST: walk/sprint steps, takeoff/land/doublejump, melee whoosh/impact, hurt/deat
 Parked: skid, void-fall, whiff, status loops, Arko-ready chirp, ambient birds, energy-low.
 
 Assets wait. Next: Auron writes the cue-name hook contract, Codex wires the bus, then first asset wave is Land + Hurt + Walk.
+
+## Cycle 1 decisions (Nox story, 2026-08-28)
+
+Adopted voice: bright SNES adventure, German. Kael is a slightly overwhelmed kid who talks to Arko. Liberation is the reward, not the kill. No doner/lottery/office sarcasm.
+
+Proposal files in repo (not live yet):
+- game/reference/KAEL_ONEPAGER.md
+- game/data/kael_idle_lines.proposed.json (same ids/animations, new UTF-8 text)
+
+Codex merge must also replace hardcoded IDLE_SPEECH_LINES in game.mjs. JSON swap alone will not change the in-game bubbles.
+
+Parked for story pass 2: thief, mountain name in-game, book origin.

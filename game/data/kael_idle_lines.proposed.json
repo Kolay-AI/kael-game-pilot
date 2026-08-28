@@ -1,0 +1,368 @@
+[
+    {
+        "id": 1,
+        "text": "Der Magen macht schon wieder den Adler.",
+        "category": "food",
+        "animation": "bellyRub"
+    },
+    {
+        "id": 2,
+        "text": "Das Buch gehört nicht auf diesen Berg.",
+        "category": "direct",
+        "animation": "armsUp"
+    },
+    {
+        "id": 3,
+        "text": "Arko, halt dich bereit.",
+        "category": "direct",
+        "animation": "crouchTalk"
+    },
+    {
+        "id": 4,
+        "text": "Läuft bei uns. Irgendwohin jedenfalls.",
+        "category": "sarcasm",
+        "animation": "shoulderRoll"
+    },
+    {
+        "id": 5,
+        "text": "Hätte auch unten im Tal bleiben können.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 6,
+        "text": "Und dafür bin ich den Hang hoch.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 7,
+        "text": "Ganz großes Kino, dieser Fluch.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 8,
+        "text": "Mein Plan war: Seite finden, nicht kämpfen.",
+        "category": "sarcasm",
+        "animation": "headScratch"
+    },
+    {
+        "id": 9,
+        "text": "Wer hat sich den Berg so ausgedacht?",
+        "category": "sarcasm",
+        "animation": "shrug"
+    },
+    {
+        "id": 10,
+        "text": "Adler, Flaschen, und ich mittendrin.",
+        "category": "sarcasm",
+        "animation": "armsCrossed"
+    },
+    {
+        "id": 11,
+        "text": "Kann das Arko nicht alleine machen?",
+        "category": "sarcasm",
+        "animation": "shrug"
+    },
+    {
+        "id": 12,
+        "text": "Sieht verflucht aus. Du zuerst, Arko.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 13,
+        "text": "Stirnband sitzt. Mut noch nicht.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 14,
+        "text": "Im Buch stand davon kein Wort.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 15,
+        "text": "Motivation? Liegt irgendwo hinter dem Fels.",
+        "category": "sarcasm",
+        "animation": "facePalm"
+    },
+    {
+        "id": 16,
+        "text": "Vielleicht löst sich der Fluch von allein.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 17,
+        "text": "Ich tu einfach so, als hätte ich einen Plan.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 18,
+        "text": "Warum passiert sowas immer mir.",
+        "category": "sarcasm",
+        "animation": "shrug"
+    },
+    {
+        "id": 19,
+        "text": "Perfekt. Noch eine Hülle.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 20,
+        "text": "Erst die Seite, dann irgendwas Warmes.",
+        "category": "food",
+        "animation": "bellyRub"
+    },
+    {
+        "id": 21,
+        "text": "Gibt es hier wenigstens einen Pfad?",
+        "category": "sarcasm",
+        "animation": "lookAround"
+    },
+    {
+        "id": 22,
+        "text": "Kopf leer, Flaschen voll. Reicht erstmal.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 23,
+        "text": "Das kann ja nur gutgehen.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 24,
+        "text": "Spoiler: der Berg meint es ernst.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 25,
+        "text": "Hätte auf Arko hören sollen.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 26,
+        "text": "Kann ich den Fluch nicht einfach umgehen?",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 27,
+        "text": "Heute wird trotzdem jemand befreit.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 28,
+        "text": "Ich brauche Pause vom Abenteuer.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 29,
+        "text": "Wer Abenteuer will, hat zu viel Mut.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 30,
+        "text": "Sieht aus wie ein Problem für die nächste Seite.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 31,
+        "text": "Dafür gibt der Berg bestimmt keinen Bonus.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 32,
+        "text": "Kurz Luft holen. Strategisch.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 33,
+        "text": "Plan B ist: Arko schickt mich vor.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 34,
+        "text": "Plan C ist: schneller als die Hülle.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 35,
+        "text": "Muss ich wirklich der Held sein?",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 36,
+        "text": "Wo sind eigentlich die Erwachsenen?",
+        "category": "sarcasm",
+        "animation": "headScratch"
+    },
+    {
+        "id": 37,
+        "text": "Bestimmt wieder meine Schuld.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 38,
+        "text": "Ich war das nicht. Der Fluch war das.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 39,
+        "text": "Das war schon kaputt, bevor ich kam.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 40,
+        "text": "Ich sehe die Hülle. Mehr muss ich nicht wissen.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 41,
+        "text": "Einmal normal wäre auf dem Berg zu viel.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 42,
+        "text": "Held sein ist lauter, als es aussieht.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 43,
+        "text": "Zurück gibt's erst nach der dritten Seite.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 44,
+        "text": "Hoffentlich zählt das fürs Buch.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 45,
+        "text": "Dafür verschwende ich meine besten Sprünge.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 46,
+        "text": "Arko, du hast den besseren Überblick.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 47,
+        "text": "Wer mich sucht: hinter dem Adler.",
+        "category": "sarcasm",
+        "animation": "lookAround"
+    },
+    {
+        "id": 48,
+        "text": "Noch ein Verfluchter. Hat gefehlt.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 49,
+        "text": "Wenn das schiefgeht, war's Absicht. Fast.",
+        "category": "sarcasm",
+        "animation": "default"
+    },
+    {
+        "id": 50,
+        "text": "Hauptsache, das Stirnband sitzt.",
+        "category": "sarcasm",
+        "animation": "handsOnHips"
+    },
+    {
+        "id": 51,
+        "text": "Drei Seiten, und der Berg lässt uns.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 52,
+        "text": "Vielleicht liegt die nächste Seite gleich da.",
+        "category": "lotto",
+        "animation": "celebrateSmall"
+    },
+    {
+        "id": 53,
+        "text": "Für den Mist brauch ich alle drei Seiten.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 54,
+        "text": "Wenn das Buch komplett ist, sind wir weg.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 55,
+        "text": "Ein bisschen Glück vom Adler wär jetzt gut.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 56,
+        "text": "Mein Glück ist heut am Hang unterwegs.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 57,
+        "text": "Seite drei, und ich geh nicht ohne die Leute.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 58,
+        "text": "Mit meinem Glück find ich zuerst die Hülle.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 59,
+        "text": "Wo ist die Seite, wenn man sie braucht?",
+        "category": "lotto",
+        "animation": "lookAround"
+    },
+    {
+        "id": 60,
+        "text": "Erst befreien, dann den Berg hinter uns.",
+        "category": "lotto",
+        "animation": "default"
+    },
+    {
+        "id": 61,
+        "text": "Einmal mit Profis. Also: mit Arko.",
+        "category": "sarcasm",
+        "animation": "shrug"
+    }
+]
