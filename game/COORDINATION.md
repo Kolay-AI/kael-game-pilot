@@ -86,3 +86,10 @@ Parked for story pass 2: thief, mountain name in-game, book origin.
 
 Hook contract v1 adopted: game/reference/AUDIO_HOOKS.md
 Codex analyzes and wires the bus later. No assets yet. ui_checkpoint and boss_gate are event-based so P1 layout can move them.
+
+## Approved for Codex implement (2026-08-29)
+
+P0: Show win when boss.liberation.phase === 'done'. despawned is cleanup only. Add an integration test so LEVEL COMPLETE cannot regress onto despawn.
+P1: Activate checkpoint ~x=3370-3400, just after heal 3350. Respawn at the checkpoint marker. ui_checkpoint stays event-based.
+
+Same diff only. No layout pack, no audio bus in this change.
