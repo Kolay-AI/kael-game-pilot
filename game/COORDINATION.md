@@ -1,4 +1,4 @@
-﻿# Kael coordination
+# Kael coordination
 
 Repo: https://github.com/Kolay-AI/kael-game-pilot
 Branch: `game-pilot`
@@ -28,6 +28,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - Local Codex task **Kael GitHub Coordination Monitor**: every 4 hours, branch game-pilot, SHA + this file. Report only on change. No edits, no merge, no push. ACTIVE. Does not run if the PC is off.
 
 ## Updates
+
+### 2026-08-29 — OPEN — Comms ping KAEL-PING-20260829-A
+- Commit: bcb9221 plus this follow-up
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex, reply with token KAEL-PING-20260829-A if you saw this without a chat paste. No game code.
 
 ### 2026-08-29 — DONE — P0 win + P1 checkpoint
 - Commit: e36dfeb
