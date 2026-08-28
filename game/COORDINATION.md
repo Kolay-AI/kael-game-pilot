@@ -34,6 +34,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 — APPROVED — Riven cycle-1 art locks
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex keep P2 layout-only and honor art constraints (no new tiles/biomes/sprites). Art must-haves after P2.
+
 ### 2026-08-29 — APPROVED — Vara cycle-1 locks + P2 spec
 - Commit: (this commit)
 - Files: game/COORDINATION.md
@@ -96,7 +102,7 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - P0 Win-condition: `playerWin` = `liberation.phase === 'done'`. `despawned` is cleanup. Commit `e36dfeb`. Overlay lock `c5f9d4e`.
 - P1 Checkpoint at x=3380 (after heal 3350, before gate 4300). Respawn at marker. Same commit `e36dfeb`.
 - Mira balance locks: `game/tests/balance-locks.test.mjs`.
-- Cycle-1 reports in: Mira, Kira, Nox, Auron, Vara.
+- Cycle-1 reports in: Mira, Kira, Nox, Auron, Vara, Riven.
 - Channel: GitHub `game-pilot` + this file.
 - Codex follow: Watch All activity + 30-minute local monitor (PC must be on).
 
@@ -104,12 +110,13 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 - P2 Break pack 2480-3000: Brute solo; Farmer-2 and Animal-2 not same activation window. Keep pack close enough that confusion can still hit two bodies. No shared wake with animal-1.
 - P2 Wake farmer-1 just after pit 700-820. SPEC LOCK: cannot wake across the pit. Require player.x > 820, or set activation radius so it cannot fire from x<=820 (do not move x and leave activation 520).
 - P2 Do not wake boss on pit lip 4130. arenaGate 4300: visible and active both require crossing it. Recovery look-at + refill before gate.
+- P2 art constraints (do not break): meadow/forest only; tileSize 16; dirt+grass cap; groundY 470; LEVEL_WIDTH 5400; no new tile materials/palettes/parallax; parallax speeds clouds .04 / mountains .11 / hills .23 / forest .37; decor only grass/flowers/bushes/rocks/trees/stumps; footprints farmer ~46x55, animal 44x38, brute 52x60, boss 70x76; code-drawn only, no sprite files; facing is a flip (no one-sided scenery); no extra lime fills; hero box ~52x82 foot-pivot on ground; checkpoint pole ~364-470.
 - After P2 (not this pass): start ammo 2/2/2 cap 4, no overflow; Arko ready-to-ready 3s FROM COMMAND (return is inside the window); boss ~180 HP, 26 contact, no combat phases; one-line prompts on first jump / first melee / first bottle. Heal 320 moves after first farmer fight.
+- After P2 art must-haves (code-drawn, no sprite files): (1) enemy silhouettes that survive curse overlay tool/4-leg/wide/horns (2) bottle projectiles bigger, color+shape matched to belt (3) Arko contrast + follow vs dive poses (4) HUD icons for energy/bottles/Arko ready, kill raw labels (5) Kael side-view idle/walk, planted feet, readable belt, stop salto spend (6) boss unique curse color + horns at 960x540.
 - Story voice: adopt `game/reference/KAEL_ONEPAGER.md` + `game/data/kael_idle_lines.proposed.json`. Must also replace hardcoded `IDLE_SPEECH_LINES` in `game.mjs`.
 - Audio spec: `game/reference/AUDIO_HOOKS.md` (analyze only, do not wire yet).
 
 ### OPEN
-- Riven: art/animation gaps (report not in).
 - P3 Layout: DROPPED extra rooms. Teach on the existing strip (walk, jump pit, melee farmer, then bottles/Arko, page as reward).
 - Small UX: double-jump caption; Arko "no target" on F no-op.
 - Story pass 2: thief, in-game mountain name, book origin.
