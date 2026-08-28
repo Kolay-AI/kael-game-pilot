@@ -1,0 +1,368 @@
+[
+    {
+        "id":  1,
+        "text":  "Voll Bock auf DÃ¶ner",
+        "category":  "food",
+        "animation":  "bellyRub"
+    },
+    {
+        "id":  2,
+        "text":  "Das ist eine Scheiss geschichte",
+        "category":  "direct",
+        "animation":  "armsUp"
+    },
+    {
+        "id":  3,
+        "text":  "Such dir arbeit penner",
+        "category":  "direct",
+        "animation":  "crouchTalk"
+    },
+    {
+        "id":  4,
+        "text":  "LÃ¤uft bei mir nur wohin",
+        "category":  "sarcasm",
+        "animation":  "shoulderRoll"
+    },
+    {
+        "id":  5,
+        "text":  "HÃ¤tte auch zuhause bleiben kÃ¶nnen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  6,
+        "text":  "Und dafÃ¼r bin ich aufgestanden",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  7,
+        "text":  "Ganz groÃŸes Kino hier",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  8,
+        "text":  "Mein Plan war eigentlich besser",
+        "category":  "sarcasm",
+        "animation":  "headScratch"
+    },
+    {
+        "id":  9,
+        "text":  "Wer hat sich den Mist ausgedacht",
+        "category":  "sarcasm",
+        "animation":  "shrug"
+    },
+    {
+        "id":  10,
+        "text":  "Ich werde eindeutig unterbezahlt",
+        "category":  "sarcasm",
+        "animation":  "armsCrossed"
+    },
+    {
+        "id":  11,
+        "text":  "Kann das jemand anderes machen",
+        "category":  "sarcasm",
+        "animation":  "shrug"
+    },
+    {
+        "id":  12,
+        "text":  "Sieht gefÃ¤hrlich aus geh du zuerst",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  13,
+        "text":  "Ich hab plÃ¶tzlich RÃ¼cken",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  14,
+        "text":  "Das stand nicht im Vertrag",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  15,
+        "text":  "Meine Motivation ist gerade gestorben",
+        "category":  "sarcasm",
+        "animation":  "facePalm"
+    },
+    {
+        "id":  16,
+        "text":  "Vielleicht lÃ¶st sich das Problem von alleine",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  17,
+        "text":  "Ich tue einfach mal so als hÃ¤tte ich einen Plan",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  18,
+        "text":  "Warum passiert sowas immer mir",
+        "category":  "sarcasm",
+        "animation":  "shrug"
+    },
+    {
+        "id":  19,
+        "text":  "Perfekt noch mehr Arbeit",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  20,
+        "text":  "Ich wollte eigentlich nur DÃ¶ner",
+        "category":  "food",
+        "animation":  "bellyRub"
+    },
+    {
+        "id":  21,
+        "text":  "Gibt es hier wenigstens WLAN",
+        "category":  "sarcasm",
+        "animation":  "lookAround"
+    },
+    {
+        "id":  22,
+        "text":  "Mein Gehirn hat gerade Feierabend",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  23,
+        "text":  "Das kann ja nur gutgehen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  24,
+        "text":  "Spoiler es geht nicht gut",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  25,
+        "text":  "Ich hÃ¤tte auf meine Mutter hÃ¶ren sollen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  26,
+        "text":  "Kann ich das nicht einfach ignorieren",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  27,
+        "text":  "Heute wird nichts mehr gerettet",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  28,
+        "text":  "Ich brauche Urlaub vom Abenteuer",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  29,
+        "text":  "Wer Abenteuer will hat zu viel Freizeit",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  30,
+        "text":  "Sieht aus wie ein Problem fÃ¼r morgen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  31,
+        "text":  "DafÃ¼r gibt es bestimmt keinen Bonus",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  32,
+        "text":  "Ich mache kurz eine strategische Pause",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  33,
+        "text":  "Mein Plan B ist wegrennen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  34,
+        "text":  "Plan C ist schneller wegrennen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  35,
+        "text":  "Muss ich wirklich der Held sein",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  36,
+        "text":  "Wo sind eigentlich die Profis",
+        "category":  "sarcasm",
+        "animation":  "headScratch"
+    },
+    {
+        "id":  37,
+        "text":  "Bestimmt wieder meine Schuld",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  38,
+        "text":  "Ich war das nicht",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  39,
+        "text":  "Das war schon kaputt",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  40,
+        "text":  "Ich sehe nichts ich weiÃŸ von nichts",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  41,
+        "text":  "Einmal normal wÃ¤re auch zu viel verlangt",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  42,
+        "text":  "Ich liebe meinen Job nicht",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  43,
+        "text":  "Wo kann man hier kÃ¼ndigen",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  44,
+        "text":  "Hoffentlich gibt das wenigstens Erfahrungspunkte",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  45,
+        "text":  "DafÃ¼r verschwende ich meine besten Jahre",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  46,
+        "text":  "Ich brauche dringend einen besseren Manager",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  47,
+        "text":  "Wer mich sucht ich bin nicht da",
+        "category":  "sarcasm",
+        "animation":  "lookAround"
+    },
+    {
+        "id":  48,
+        "text":  "Noch ein Gegner genau das hat gefehlt",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  49,
+        "text":  "Wenn das schiefgeht war es Absicht",
+        "category":  "sarcasm",
+        "animation":  "default"
+    },
+    {
+        "id":  50,
+        "text":  "Hauptsache professionell aussehen",
+        "category":  "sarcasm",
+        "animation":  "handsOnHips"
+    },
+    {
+        "id":  51,
+        "text":  "HÃ¤tte ich mal Lotto gespielt",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  52,
+        "text":  "Vielleicht knack ich heute den Jackpot",
+        "category":  "lotto",
+        "animation":  "celebrateSmall"
+    },
+    {
+        "id":  53,
+        "text":  "FÃ¼r den Mist brauch ich sechs Richtige",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  54,
+        "text":  "Wenn ich im Lotto gewinne bin ich weg",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  55,
+        "text":  "Jackpot wÃ¤re jetzt auch nicht schlecht",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  56,
+        "text":  "Ich glaub mein GlÃ¼ck ist heute im Urlaub",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  57,
+        "text":  "Sechs Richtige und ich kÃ¼ndige sofort",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  58,
+        "text":  "Mit meinem GlÃ¼ck gewinne ich nicht mal beim Rubbellos",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  59,
+        "text":  "Wo ist mein Lottoschein wenn man ihn braucht",
+        "category":  "lotto",
+        "animation":  "lookAround"
+    },
+    {
+        "id":  60,
+        "text":  "Erst Abenteuer dann Lotto",
+        "category":  "lotto",
+        "animation":  "default"
+    },
+    {
+        "id":  61,
+        "text":  "Einmal mit Profis wirklich!",
+        "category":  "sarcasm",
+        "animation":  "shrug"
+    }
+]

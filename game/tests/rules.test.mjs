@@ -2,7 +2,7 @@ import test from'node:test';import assert from'node:assert/strict';import{RULES,
 test('Energie fällt nie unter null',()=>assert.equal(damage(10,15),0));
 test('dritte Seite schaltet Rezept frei',()=>assert.equal(collectPage(2).unlock,'FROST-MEISTERSCHAFT'));
 test('Flaschen haben verschiedene Wirkungen',()=>{const e={hp:100};assert.equal(bottleHit(e,'frost').hp,88);assert.equal(bottleHit(e,'ember').hp,62);assert.equal(bottleHit(e,'confusion').effect,'confusion')});
-test('Frost und Confusion besitzen sichtbare, endliche Wirkprofile',()=>{assert.deepEqual(bottleEffectProfile('frost'),{damage:12,duration:3});assert.deepEqual(bottleEffectProfile('confusion'),{damage:6,duration:5});assert.equal(bottleHit({hp:100},'frost').effectTime,3);assert.equal(bottleHit({hp:100},'confusion').effectTime,5)});
+test('Frost und Confusion besitzen sichtbare, endliche Wirkprofile',()=>{assert.deepEqual(bottleEffectProfile('frost'),{damage:12,duration:3});assert.deepEqual(bottleEffectProfile('confusion'),{damage:14,duration:5});assert.equal(bottleHit({hp:100},'frost').effectTime,3);assert.equal(bottleHit({hp:100},'confusion').effectTime,5)});
 test('Checkpoint stellt 100 Energie her',()=>assert.deepEqual(respawn({energy:0,x:2,y:3},{x:9,y:8}),{energy:RULES.maxEnergy,x:9,y:8,vx:0,vy:0}));
 test('Nahkampf trifft Gegner pro Angriff nur einmal',()=>{assert.equal(meleeCanHit(4,3),true);assert.equal(meleeCanHit(4,4),false)});
 test('Verwirrung respektiert deterministischen Cooldown',()=>{assert.equal(confusionCanStrike(0,true),true);assert.equal(confusionCanStrike(.01,true),false);assert.equal(tickCooldown(.4,.25),.15000000000000002)});

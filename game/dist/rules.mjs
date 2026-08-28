@@ -1,4 +1,4 @@
-export const RULES=Object.freeze({maxEnergy:100,walk:190,sprint:300,jump:570,gravity:1450,meleeDamage:28,bottles:{frost:{damage:12,duration:3},ember:{damage:38,duration:2},confusion:{damage:6,duration:5}}});
+export const RULES=Object.freeze({maxEnergy:100,walk:190,sprint:300,jump:570,gravity:1450,meleeDamage:28,bottles:{frost:{damage:12,duration:3},ember:{damage:38,duration:2},confusion:{damage:14,duration:5}}});
 export function damage(hp,amount){return Math.max(0,hp-amount)}
 export function collectPage(n){const pages=n+1;return{pages,unlock:pages===3?'FROST-MEISTERSCHAFT':null}}
 export function applyPageUnlock(state){if(state.pages<3||state.pageUnlock)return state;const bottles={};for(const [type,count]of Object.entries(state.bottles))bottles[type]=Math.min(5,count+1);return{...state,pageUnlock:true,bottleCapacity:5,bottles}}

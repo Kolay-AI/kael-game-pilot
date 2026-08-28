@@ -1,7 +1,7 @@
-export const KAEL_POSES=Object.freeze(['idle','walk','sprint','takeoff','jumpUp','flip','fall','land','crouch','melee','throw','hit']);
+export const KAEL_POSES=Object.freeze(['idle','walk','sprint','turn','takeoff','jumpUp','doubleJump','flip','fall','land','crouch','melee','throw','hit']);
 export const ANIMATIONS=Object.freeze({
- idle:{fps:4,frames:8,loop:true},walk:{fps:12,frames:12,loop:true},sprint:{fps:16,frames:12,loop:true},
- takeoff:{fps:18,frames:4,loop:false},jumpUp:{fps:8,frames:3,loop:false},flip:{fps:20,frames:16,loop:false,phases:['trigger','trigger','tuck','tuck','entry','entry','mid','mid','mid','late','late','late','open','open','fallTransition','fallTransition']},fall:{fps:8,frames:3,loop:false},land:{fps:18,frames:6,loop:false},
+ idle:{fps:4,frames:8,loop:true},walk:{fps:12,frames:12,loop:true},sprint:{fps:16,frames:12,loop:true},turn:{fps:18,frames:4,loop:false},
+ takeoff:{fps:18,frames:4,loop:false},jumpUp:{fps:8,frames:3,loop:false},doubleJump:{fps:12,frames:10,loop:false,phases:['boostStart','armsBack','armsForward','kneesUp','fastLegs','fastLegs','airPeak','balance','fallTransition','fallTransition']},flip:{fps:20,frames:16,loop:false,phases:['trigger','trigger','tuck','tuck','entry','entry','mid','mid','mid','late','late','late','open','open','fallTransition','fallTransition']},fall:{fps:8,frames:3,loop:false},land:{fps:18,frames:6,loop:false},
  crouch:{fps:1,frames:1,loop:false},melee:{fps:15,frames:8,loop:false,phases:['windup','windup','active','active','active','recover','recover','recover']},
  throw:{fps:14,frames:8,loop:false,phases:['windup','windup','release','release','recover','recover','recover','recover']},hit:{fps:18,frames:5,loop:false}
 });
@@ -10,23 +10,34 @@ export function horizontalMotion(body,{axis=0,sprint=false,onGround=true,knockba
  if(knockback>0)return{vx:body.vx,face:body.face};
  const target=axis*(sprint?300:190),turning=axis&&Math.sign(body.vx)&&Math.sign(body.vx)!==axis;
  const accel=onGround?(turning?2500:axis?1750:2100):(axis?720:180);
- return{vx:approach(body.vx,target,accel*dt),face:axis?axis:body.face};
+ return{vx:approach(body.vx,target,accel*dt),face:axis?axis:body.face,turnTime:turning&&onGround?.12:0};
 }
 export function animationFrame(pose,elapsed){const a=ANIMATIONS[pose]||ANIMATIONS.idle;const raw=Math.floor(Math.max(0,elapsed)*a.fps);return a.loop?raw%a.frames:Math.min(a.frames-1,raw)}
 export function animationPhase(pose,frame){return ANIMATIONS[pose]?.phases?.[frame]??pose}
+export function kaelEyeState(blink=false){return blink?'EYES_BLINK':'EYES_OPEN'}
+// Eyes stay open for most of the cycle; the short closed interval is a blink.
+export function kaelBlinkState(time=0){const cycle=((Math.max(0,time)%4.6));return kaelEyeState(cycle>=4.38&&cycle<4.50)}
 export function canDoubleJump(p){return !!p&&!p.on&&!p.doubleJumpUsed&&p.hitTime<=0&&!p.duck}
 export function canMeleeDamage(player,enemyLastHit){return player.pose==='melee'&&player.attack>0&&animationPhase('melee',animationFrame('melee',player.animTime))==='active'&&player.attackId>0&&player.attackId!==enemyLastHit}
-export function kaelPose(p,axis,sprint){if(p.hitTime>0)return'hit';if(p.attack>0)return'melee';if(p.throwTime>0)return'throw';if(p.duck)return'crouch';// Somersault rendering is disabled pending ROM motion study; physics remains active.
-if(p.flipTime>0)return p.vy<0?'jumpUp':'fall';if(p.takeoffTime>0)return'takeoff';if(!p.on)return p.vy<0?'jumpUp':'fall';if(p.landTime>0)return'land';if(axis||Math.abs(p.vx)>18)return sprint?'sprint':'walk';return'idle'}
+export function kaelPose(p,axis,sprint){if(p.hitTime>0)return'hit';if(p.attack>0)return'melee';if(p.throwTime>0)return'throw';if(p.duck)return'crouch';if(p.doubleJumpTime>0)return'doubleJump';if(p.takeoffTime>0)return'takeoff';if(!p.on)return p.vy<0?'jumpUp':'fall';if(p.landTime>0)return'land';if(p.turnActive||p.turnTime>0)return'turn';if(axis||Math.abs(p.vx)>18)return sprint?'sprint':'walk';return'idle'}
 // Eight distinct contact/passing/push-off poses. Values are [leftX,leftY,rightX,rightY]
 // and deliberately move the boots through a full stride, rather than merely bobbing.
 const WALK_LEGS=[[-12,0,12,-4],[-9,-2,10,0],[-5,-4,7,0],[0,-5,3,0],[5,-3,-1,0],[9,-1,-6,0],[12,0,-10,-4],[10,0,-8,-2],[7,0,-5,-4],[3,0,0,-2],[-1,0,5,-1],[-7,0,10,-3]];
 const SPRINT_LEGS=[[-18,0,17,-8],[-14,-4,14,0],[-9,-8,10,0],[-3,-12,5,0],[4,-9,-1,0],[11,-3,-8,0],[17,0,-15,-8],[13,0,-12,-5],[8,0,-9,-9],[2,0,-3,-6],[-5,0,5,-3],[-12,0,13,-5]];
+// Right-run transfer: the planted leg carries the pelvis while the free thigh
+// passes through. These offsets are deliberately modest; the hip/belt overlap
+// in the active renderer remains the visual connection between torso and legs.
+const RIGHT_RUN_LEGS=[[-14,0,15,-5],[-10,-3,12,0],[-5,-7,8,0],[1,-8,2,0],[7,-5,-5,0],[12,0,-11,-4],[14,0,-14,-5],[10,0,-12,-2],[5,0,-8,-5],[-1,0,-1,-3],[-7,0,7,-2],[-12,0,14,-4]];
+const RIGHT_SPRINT_LEGS=[[-21,0,20,-9],[-16,-5,17,0],[-9,-11,12,0],[-2,-15,7,0],[6,-12,-3,0],[15,-4,-14,0],[20,0,-20,-9],[15,0,-17,-6],[8,0,-12,-11],[1,0,-3,-8],[-7,0,8,-4],[-16,0,19,-7]];
 const FLIP_META=[[-2,0,2,-3],[-3,-1,3,-3],[-4,-2,4,-2],[-4,-3,5,-1],[-3,-4,6,-2],[-2,-4,6,-3],[-1,-3,5,-4],[0,-2,4,-4],[1,-1,3,-3],[2,0,2,-2],[3,0,1,-1],[4,0,0,0],[5,0,-1,0],[5,0,-1,1],[4,0,0,1],[3,0,1,0]];
-export function kaelRenderFrame(pose,frame){let raw=[0,0,0,0],upperY=0,lean=0,bodyTilt=0,rotation=0;if(pose==='walk')raw=WALK_LEGS[frame%12];if(pose==='sprint'){raw=SPRINT_LEGS[frame%12];lean=5;bodyTilt=-2}if(pose==='jumpUp')raw=[[-3,1,5,-3],[-2,0,4,-5],[1,-2,5,-6]][frame%3];if(pose==='flip'){raw=FLIP_META[Math.min(15,Math.max(0,frame))];rotation=(Math.min(15,Math.max(0,frame))/15)*Math.PI*2;upperY=-3}if(pose==='fall')raw=[[4,-3,-4,0],[6,-1,-6,2],[3,1,-2,4]][frame%3];if(pose==='idle'||pose==='walk'||pose==='sprint')upperY=pose==='idle'?[0,-1,0,1,0,-1,0,1][frame%8]:[1,0,-1,0,0,-1,0,1,0,-1,0,1][frame%12];if(pose==='crouch')upperY=17;if(pose==='takeoff')raw=frame<2?[-2,3,3,2]:[-3,0,4,-4];if(pose==='land')raw=frame<2?[2,-1,-2,0]:frame<4?[0,2,2,1]:[0,0,0,0];if(pose==='takeoff'||pose==='land')upperY=frame<2?5:2;if(pose==='hit')lean=-4;const floor=Math.max(raw[1],raw[3],0),legs=[raw[0],raw[1]-floor,raw[2],raw[3]-floor];
+export function kaelRenderFrame(pose,frame,face=0){let raw=[0,0,0,0],upperY=0,lean=0,bodyTilt=0,rotation=0,pelvisX=0,pelvisY=0;const directionalRun=(face===1||face===-1)&&(pose==='walk'||pose==='sprint'),rightRun=directionalRun;if(pose==='walk')raw=(rightRun?RIGHT_RUN_LEGS:WALK_LEGS)[frame%12];if(pose==='sprint'){raw=(rightRun?RIGHT_SPRINT_LEGS:SPRINT_LEGS)[frame%12];lean=5;bodyTilt=-2}if(rightRun){const i=frame%12;lean=pose==='sprint'?8:7;pelvisX=[0,3,6,7,4,0,-4,-7,-5,0,3,1][i];pelvisY=[0,0,2,4,2,0,0,2,3,1,0,0][i]}if(pose==='jumpUp')raw=[[-3,1,5,-3],[-2,0,4,-5],[1,-2,5,-6]][frame%3];if(pose==='flip'){raw=FLIP_META[Math.min(15,Math.max(0,frame))];rotation=(Math.min(15,Math.max(0,frame))/15)*Math.PI*2;upperY=-3}if(pose==='fall')raw=[[4,-3,-4,0],[6,-1,-6,2],[3,1,-2,4]][frame%3];if(pose==='melee'){const phase=frame<2?'windup':frame<5?'active':'recover',step=frame%5+1;raw=step===2?(phase==='active'?[-5,0,9,-5]:[-2,1,4,-1]):step===3?(phase==='active'?[5,-3,-4,1]:[2,0,-2,1]):step===5?(phase==='active'?[-2,2,3,2]:[0,1,1,1]):(phase==='active'?[3,-1,-2,1]:[0,0,0,0]);lean=phase==='active'?2:phase==='windup'?-1:0}if(pose==='idle'||pose==='walk'||pose==='sprint')upperY=pose==='idle'?[0,-1,0,1,0,-1,0,1][frame%8]:[1,0,-1,0,0,-1,0,1,0,-1,0,1][frame%12];if(pose==='crouch')upperY=17;if(pose==='takeoff')raw=frame<2?[-2,3,3,2]:[-3,0,4,-4];if(pose==='land')raw=frame<2?[2,-1,-2,0]:frame<4?[0,2,2,1]:[0,0,0,0];if(pose==='takeoff'||pose==='land')upperY=frame<2?5:2;if(pose==='hit')lean=-4;const floor=Math.max(raw[1],raw[3],0),legs=[raw[0],raw[1]-floor,raw[2],raw[3]-floor];
  // Arms counter-swing against the left leg. The sign is intentionally not
  // derived from facing: mirroring the drawing mirrors the pose, never time.
- const armSwing=pose==='sprint'?legs[0]*1.15:pose==='walk'?legs[0]*.95:0;return{legs,upperY,lean,bodyTilt,armSwing,rotation,blink:pose==='idle'&&(frame===2||frame===6),bootBottoms:[legs[1],legs[3]]}}
+ const armSwing=pose==='sprint'?legs[0]*1.15:pose==='walk'?legs[0]*.95:0;return{legs,upperY,lean,bodyTilt,armSwing,rotation,pelvisX,pelvisY,facing:face,blink:pose==='idle'&&(frame===2||frame===6),bootBottoms:[legs[1],legs[3]]}}
+export function doubleJumpRenderFrame(frame){const f=Math.max(0,Math.min(9,frame)),legs=[[-4,1,6,-2],[-8,0,9,-5],[-11,-3,12,-8],[-6,-7,8,-12],[2,-10,-4,-5],[10,-6,-11,-2],[7,-2,-8,2],[3,0,-4,-1],[-1,0,3,-1],[-3,1,4,-2]][f];const upper=[1,0,-1,-2,-2,-1,0,1,1,0][f],arms=[-5,-10,12,10,4,-2,-6,-3,2,4][f];return{legs,upperY:upper,lean:f<4?-1:f>7?1:0,bodyTilt:0,armSwing:arms,rotation:0,blink:false,bootBottoms:[legs[1],legs[3]]}}
+
+export const KAEL_POSE_INVARIANTS=Object.freeze({head:1,torso:1,arms:2,hands:2,legs:2,feet:2});
+export function validateKaelPoseDefinition(pose){return KAEL_POSES.includes(pose)&&KAEL_POSE_INVARIANTS.head===1&&KAEL_POSE_INVARIANTS.torso===1&&KAEL_POSE_INVARIANTS.arms===2&&KAEL_POSE_INVARIANTS.hands===2&&KAEL_POSE_INVARIANTS.legs===2&&KAEL_POSE_INVARIANTS.feet===2}
 export function facingTransform(face,pivotX){return{scaleX:face<0?-1:1,translateX:pivotX}}
 export function actionAnchors(pose,face){const reach=pose==='melee'?34:pose==='throw'?25:18;return{hand:{x:face*reach,y:pose==='crouch'?13:2},projectile:{x:face*28,y:pose==='crouch'?-1:-12}}}
 export function renderMetrics(player){return{pivotX:player.x+player.w/2,footY:player.y+player.h}}
