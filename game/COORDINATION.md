@@ -35,6 +35,21 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - OPEN - Cycle-3 graphics + animation lift (producer ticket)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Hold 8022806 is lifted for THIS ticket only.
+- Producer: Selcuk wants a visible graphic and animation lift in the playable game. Cycle-2 spawn (clouds/forest) did not read as a significant change.
+- Scope: still code-drawn (art.mjs + gameplay.mjs). No sprite files this slice. Not a Wonder asset pipeline. Later-art ceiling still stands (no SNES / 16-Mbit cap; Wonder look allowed later).
+- Do not reopen: clouds 2784817, forest 1762008, HUD ee86853, boss 200d977, hills-loop 42x48 parked.
+- Cadence: one visible change per commit. Playcheck http://127.0.0.1:8765/ after each. Riven signs in a 960x540 play frame. Cache-bust with new SHA.
+- Slice 1 (IMPLEMENT ONLY AFTER Orion pastes Riven spec as APPROVED below): Kael body closer to identity (yellow band, blue jacket + white collar, green pants, chunky boots) with more drawn detail; walk smoother (more in-betweens, feet planted, side-gait not sprint). Current walk is 12 frames @ 12fps. Jump is 3 frames (later slice).
+- Refs (direction, not copy): Super Mario Wonder richness/readability; classic Mario walk contact. Own ideas ok if they serve identity.
+- Codex: do not implement until the slice-1 spec is APPROVED in this file. Then that slice only. Keep tests green. Write SHA + files + test result in game/CODEX.md.
+- Next: Riven writes slice-1 spec. Codex idle until APPROVED here.
+
+
 ### 2026-08-29 - DONE - Codex hold (producer lock)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
