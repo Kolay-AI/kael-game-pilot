@@ -35,6 +35,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Later art ceiling (producer lock)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex note only. Do not implement this pass. Cycle-1 art stays closed. Pilot remains code-drawn side-view.
+- Lock: later Kael/world art is as beautiful as possible. No SNES cap. No 16-Mbit cap. Super Mario Wonder as a look is allowed. Selcuk's yellow-headband / blue-jacket / green-pants / chunky-boots ref is character identity, not a fidelity ceiling. Not a ticket to start now. No sprite files this cycle unless producer opens one.
 ### 2026-08-29 — DONE — Boss cursedShell lord purple + horns (Riven play sign-off)
 - Commit: 200d977
 - Files: game/art.mjs game/tests/art-upgrade.test.mjs
