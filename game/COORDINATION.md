@@ -35,6 +35,11 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Codex hold (producer lock)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex do not implement. No new game-code, no art, no hills-loop recast, no Wonder pass. Stay tech-lead and keep reading this file. Next implementation only when producer opens a ticket.
 ### 2026-08-29 - DONE - Hills-loop 42x48 parked (producer lock)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
