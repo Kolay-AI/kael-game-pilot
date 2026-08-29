@@ -31,7 +31,7 @@ const box=(g,x,y,w,h,c,ol=P.o)=>{px(g,x-2,y-2,w+4,h+4,ol);px(g,x,y,w,h,c)};
 // instead of a stack of hard rectangles.  Keep the 1px highlights to retain the
 // deliberately low-resolution SNES palette language.
 const blob=(g,pts,c,ol=P.o)=>{poly(g,pts,ol);poly(g,pts.map(([x,y])=>[x+(x<0?2:-2),y+2]),c)};
-function cloud(g,x,y,s=1){const c='#fff1c7',d='#cde1bd';for(const q of[[0,8,42,10],[8,2,18,13],[23,0,15,15],[34,6,16,12]])box(g,x+q[0]*s,y+q[1]*s,q[2]*s,q[3]*s,c,d);px(g,x+8*s,y+13*s,35*s,3*s,'#e8d9ac')}
+function cloud(g,x,y,s=1){const c='#fff1c7',d='#cde1bd';for(const [ox,oy,r] of[[10,12,14],[24,8,16],[40,13,13]]){const cx=x+ox*s,cy=y+oy*s,rr=r*s;blob(g,[[cx,cy-rr*.7],[cx+rr*.65,cy-rr*.35],[cx+rr,cy+rr*.15],[cx+rr*.45,cy+rr*.7],[cx-rr*.25,cy+rr*.65],[cx-rr*.85,cy+.1*rr],[cx-rr*.5,cy-rr*.4]],c,d)}}
 export function drawPixelBackground(g,w,h,cam){
  const bands=['#459bc7','#58acd0','#72bdd3','#91cbd0','#bad6ba','#e5d39a'];for(let i=0;i<bands.length;i++)px(g,0,i*Math.ceil(470/bands.length),w,Math.ceil(470/bands.length)+1,bands[i]);
  for(let i=0;i<8;i++)cloud(g,((i*287-cam*.04)%1450+1450)%1450-100,55+(i%3)*39,i%2?1:1.3);
