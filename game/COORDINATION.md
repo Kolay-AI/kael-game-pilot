@@ -35,6 +35,31 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Cycle-3 slice 2 jump identity + in-betweens (Riven spec)
+- Commit: (this commit)
+- Files: game/art.mjs game/gameplay.mjs game/tests/*.test.mjs
+- Tests: node --test tests/*.test.mjs must stay green
+- Next: Orion IMPLEMENT NOW (Codex still idle, TBD, do not implement). Playcheck http://127.0.0.1:8765/?v=<sha> hard reload. Riven signs 960x540: spawn, then Space through takeoff/jumpUp/fall/land, and F/doubleJump. Not a sheet.
+
+Walk/idle/sprint OFF LIMITS. Walk e260fe3 locked.
+
+A. Identity leak (takeoff, jumpUp, doubleJump, fall, land)
+- Shin: P.green (back #2d6134), knee tick #65a545. Skin only 3x2 knee cap. No P.skin shin.
+- Jacket: drop normalJump poly. Use idle/walk blob + wrap collar (#f3e4c2 24x4 at neck, 4x6 tabs) + two #123c72 fold ticks + shirt cuffs at gloves. Band knot + two tails stay.
+- Boots: drawBoot 5px #171827 sole, #b56b38 welt. Air poses drawBoot(x,y) without walk dy-10 plant.
+- doubleJump: identity only. Keep 10-frame table / armSwing. No salto restyle.
+
+B. Jump in-betweens
+ANIMATIONS: takeoff {fps:18, frames:8, loop:false}; jumpUp {fps:16, frames:6, loop:false}; fall {fps:16, frames:6, loop:false}; land {fps:18, frames:8, loop:false}; doubleJump stays 10@12.
+TAKEOFF_LEGS 8: [[-2,3,3,2],[-2,3,3,2],[-2,2,3,1],[-2,2,3,0],[-3,1,4,-2],[-3,0,4,-3],[-3,0,4,-4],[-3,0,4,-4]]
+JUMP_UP_LEGS 6: [[-3,1,5,-3],[-2,0,4,-4],[-2,0,4,-5],[0,-1,4,-6],[1,-2,5,-6],[2,-3,5,-7]]
+FALL_LEGS 6: [[4,-3,-4,0],[5,-2,-5,1],[6,-1,-6,2],[4,0,-4,3],[3,1,-2,4],[2,2,-1,5]]
+LAND_LEGS 8: [[2,-1,-2,0],[1,0,-1,0],[0,2,2,1],[0,2,1,1],[0,1,1,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
+kaelRenderFrame: index by frame, no leftover %3. takeoff/land upperY: frames 0-2 = 5, else 2. jumpKneeLift can stay (takeoff 4, jumpUp 8, fall 4). IK default sagittal leg().
+
+Off: clouds 2784817, forest 1762008, HUD, boss, hills, P2, sprites, Wonder pipeline. nativeHeroBox ~52x82. Belt bottles readable. Flip remaps to doubleJump.
+
+
 ### 2026-08-29 - OPEN - Cycle-3 slice 2 jump identity (producer ticket)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
