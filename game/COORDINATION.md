@@ -35,6 +35,20 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder character bible (Riven)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs. Playable build stays 868c989 (code-drawn). No sprites in 8765.
+- Lock: Wonder 2.5D claymation / toy volume is the only later-art look. Not Mario. Not pixel upscale. Not SNES. Medium: matte painted clay / vinyl toy. Rounded chunky volume, soft studio light, slight surface pores. Large head, large hands, oversized boots. Cream collar is the loudest jacket read.
+- Identity hex (must hold in every pose): yellow band #f2ad24 knot at back two long flat tails; blue jacket #1767a8; cream wrap collar + cuffs #f3e4c2 (fleece); green pants #39733b to the boot cuff, no tan shins; chunky brown boots thick dark sole molded laces/straps; belt three corked bottles frost round cyan, ember squat red, confusion taller yellow.
+- Bottles in-hand: frost = round flask + snowflake stamp; ember = squat angular vial + flame; confusion = tall corked bottle + question mark. Gold clay glints, not spark particles. Hands are skin + cream cuffs, not brown gloves.
+- Do not: Mario hat/overalls/gloves, pixel grid, SNES dither, glass-photoreal, extra lime grass, fourth belt bottle.
+- Sheets this drop: sprint, hurt/recoil, throw (frost leaving the hand, two bottles remain on belt), bottles-in-hand. Idle + spawn already locked.
+- Same toy volume later (not this drop): cursed-shell farmer/animal/brute, boss purple horns #633a6f, freed villagers.
+- Codex: do not implement. No art.mjs. No sprite ticket yet.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder QA gate (Mira)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
