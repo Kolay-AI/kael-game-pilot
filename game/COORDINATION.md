@@ -35,6 +35,11 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Forest canopies leaf blobs (Riven play sign-off)
+- Commit: ad03345
+- Files: game/art.mjs game/tests/art-upgrade.test.mjs
+- Tests: 78/78. Riven signed off in a 960x540 spawn frame (cam 0): clustered canopies, not stacked crates. Sky/clouds/mountains/hills/dirt/grass untouched.
+- Next: Cycle-2 continues. Next one-change still code-drawn, not Wonder.
 ### 2026-08-29 - APPROVED - Later art ceiling (producer lock)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
