@@ -35,6 +35,14 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - DONE - Jumper 20a85dc Wonder jump/fall/land sprites in 8765
+- Commit: 20a85dc (pushed)
+- Play: http://127.0.0.1:8765/?v=20a85dc
+- Tests: 85/85
+- Files: game/sprites/kael-takeoff.png jumpUp.png doubleJump.png fall.png land.png. Idle/walk PNGs untouched.
+- Mira: playcheck opened on 20a85dc (air must be Wonder, not voxel).
+
+
 ### 2026-08-30 - APPROVED - Mira playcheck 463b9d5 idle+walk PASS
 - Play: http://127.0.0.1:8765/?v=463b9d5
 - Spawn is Wonder later-art sheets, not a924184/868c989 voxel clay.
