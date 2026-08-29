@@ -35,6 +35,17 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder 2.5D look lock (producer)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Lock: Super Mario Bros Wonder claymation 2.5D is the ONLY later-art look. Not a Mario copy. Identity stays: yellow band + knot/tails, blue jacket, cream wrap collar, green pants to chunky brown boots, belt bottles. No SNES cap. No pixel upscale of the code-drawn hero.
+- Playable game-pilot stays the code-drawn build at 868c989 until producer opens a sprite/pipeline ticket. Do not drop Wonder sprites into art.mjs this pass.
+- Codex: still idle, next code ticket TBD. Do not invent work. Do not implement this look.
+- Specialists create the look: Riven art bible + sheets, Vara readability/juice locks, Nox tone, Kira level-art spaces, Auron mood, Mira identity QA. Orion coordinates and keeps generating later-art.
+- Next: specialists return their locks. No game-code until a new ticket.
+
+
 ### 2026-08-29 - DONE - Cycle-3 slice 2 jump identity + in-betweens (Riven play sign-off)
 - Commit: 868c989
 - Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
