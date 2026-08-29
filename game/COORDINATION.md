@@ -35,6 +35,40 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Cycle-3 slice 1 Kael identity + walk 24 (Riven spec)
+- Commit: (this commit)
+- Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs
+- Tests: node --test tests/*.test.mjs must stay green
+- Next: Codex IMPLEMENT NOW. One commit. Then SHA + files + test result in game/CODEX.md. Playcheck http://127.0.0.1:8765/?v=<sha> hard reload. Riven signs in a 960x540 play frame (spawn stand, then hold A/D walk on meadow). Not a sheet.
+
+IMPLEMENT (Kael only): art.mjs drawKaelCompletePose + gameplay.mjs walk table. Same silhouette, denser draw, twice the walk keys.
+
+A. Identity density (idle + walk share this path; sprint chain off-limits)
+Palette lock: yellow #f2ad24 / #ffe36b, blue #123c72 / #1767a8 / #78c9e8, collar/shirt #f3e4c2, pants #39733b / back #2d6134 / #65a545, leather #70402c / #b56b38, outline #171827.
+- Band: keep the 32x6 bar + existing tail. Add a knot blob at the tail root (~-16, headY) 6x5 #f2ad24 with 2px #ffe36b. Second tail strand 2px below the first, 18px long.
+- Collar: replace the two P.shirt triangles with a wrap collar — 4px #f3e4c2 band around the neck opening. 2px #f3e4c2 cuff on each sleeve where blue meets the leather glove.
+- Jacket folds: two 1px #123c72 ticks on the torso front at local y -52 and -48.
+- Pants: walk and idle shin limbs are currently P.skin. Paint them P.green (back leg #2d6134) down to the boot. Keep the #65a545 knee tick. Skin stays at the knee cap only.
+- Boots: drawBoot sole becomes a 5px #171827 platform; 2px #b56b38 welt above it. Keep metal toe and yellow stitch. Walk still calls drawBoot(boot[0], boot[1]-10) so the contact sole sits at local y=0.
+
+B. Walk in-betweens
+ANIMATIONS.walk: {fps:24, frames:24, loop:true}. Same 1.0s cycle as 12@12.
+WALK_LEGS 24 rows (12 keys + midpoints, then floor so one support foot is always 0):
+[[-12,0,12,-4],[-11,0,12,-4],[-10,0,11,-3],[-8,0,10,-2],[-6,0,8,-2],[-4,0,6,-1],[-2,-1,4,0],[1,-2,0,0],[4,-3,-3,0],[6,-2,-4,0],[9,-1,-6,0],[10,-2,-9,0],[12,-4,-12,0],[12,-4,-11,0],[11,-3,-10,0],[10,-2,-8,0],[8,-2,-6,0],[6,-1,-4,0],[4,0,-2,-1],[0,0,1,-2],[-3,0,4,-3],[-6,0,7,-3],[-8,0,10,-3],[-10,0,11,-4]]
+Contact: L planted frames 0-5 and 18-23, R planted 6-17. Every frame has a 0 dy support. Passing ~6 and ~18.
+kaelRenderFrame: WALK_LEGS[frame%24]. Walk upperY hold the current 12-cycle two frames each (don't double-speed the bob). Arm swing stays modest opposite (walk branch, right hand ~18 not sprint ~27).
+Walk IK stays sagittal. No outward-knee, no pelvisX, no runPose on walk.
+
+Contracts:
+- Walk is walk, not sprint. RIGHT_SPRINT_LEGS / SPRINT_LEGS / sprint fps 16 untouched.
+- nativeHeroBox ~52x82. Flip still remaps to doubleJump.
+- Belt bottles stay readable (#49cde0 / #ed5d4c / #e7d34c).
+- Off: clouds 2784817, forest 1762008, HUD, Boss cursedShell, Hills 42x48, P2 layout, idle skip/upperSway.
+- No sprite files. No Wonder pipeline. Code-drawn only.
+
+Play-pixel: stand at spawn (collar, knot, green pants to boot, chunky sole), then walk (no pop, no slide, planted foot every frame).
+
+
 ### 2026-08-29 - OPEN - Cycle-3 graphics + animation lift (producer ticket)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
