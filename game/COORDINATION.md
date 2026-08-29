@@ -35,6 +35,21 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - OPEN - Codex next ticket TBD (producer lock)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Producer: Codex is off Cycle-3 graphics/animation. Slice 1 was implemented without Codex at e260fe3 (art.mjs + gameplay.mjs, walk 24). Do not implement, revert, or restyle that slice. Do not start slice 2. Do not recast hills, clouds, forest, HUD, boss, Wonder, sprites.
+- Stay tech-lead. Keep reading this file. Next implementation only when producer opens a new ticket with a named task. Task is TBD — do not invent work.
+- Next: Codex idle. Wait.
+
+### 2026-08-29 - OPEN - Cycle-3 slice 1 playcheck (Orion build e260fe3)
+- Commit: e260fe3
+- Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
+- Tests: see CODEX.md / local node --test
+- Next: Mira/Riven play-sign at http://127.0.0.1:8765/?v=e260fe3 (hard reload). Spawn stand then A/D walk. 960x540 play frame, not a sheet. Orion marks DONE only after that playcheck.
+
+
 ### 2026-08-29 - APPROVED - Cycle-3 slice 1 Kael identity + walk 24 (Riven spec)
 - Commit: (this commit)
 - Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs
