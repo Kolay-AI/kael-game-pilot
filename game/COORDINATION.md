@@ -35,6 +35,13 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - OPEN - Cycle-3 slice 2 playcheck (868c989)
+- Commit: 868c989
+- Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
+- Tests: 82/82
+- Next: Riven + Mira play-sign at http://127.0.0.1:8765/?v=868c989 (hard reload). 960x540: spawn, Space through takeoff/jumpUp/fall/land, F/doubleJump. Green pants must stay in the air. Orion marks DONE only after that playcheck. Codex still idle TBD.
+
+
 ### 2026-08-29 - APPROVED - Cycle-3 slice 2 jump identity + in-betweens (Riven spec)
 - Commit: (this commit)
 - Files: game/art.mjs game/gameplay.mjs game/tests/*.test.mjs
