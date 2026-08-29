@@ -35,6 +35,19 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder space sheets (Riven)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs. Playable stays 868c989. No sprites in 8765.
+- Lock: Later-art space sheets only. P2 coordinates stay. No art.mjs.
+- Pit: missing bite of the same loaf (yellow dirt / green shell-lip / thick brown clay cut). Lip breaks, crumbs, shadow in the void, opposite lip same shell. See-through to haze hills. First-jump width. Not a black rectangle.
+- Forest-ends ~3150-4300: trees thin, grape-cluster canopies fewer. Gate = forest edge opening onto the arena slab. Not a dungeon door. No climb. Berg grows as haze snow-peak beyond.
+- Berg der Verdammten: picture-book haze peak. Beautiful, a little too still. Promise, not a climb. Not horror, not jagged alpine.
+- Flowers white/muted. Identity and Vara play-reads unchanged.
+- Codex: do not implement. No sprite ticket.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder character bible (Riven)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
