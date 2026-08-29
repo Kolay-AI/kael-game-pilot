@@ -35,6 +35,13 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - APPROVED - Mira playcheck 463b9d5 idle+walk PASS
+- Play: http://127.0.0.1:8765/?v=463b9d5
+- Spawn is Wonder later-art sheets, not a924184/868c989 voxel clay.
+- Identity holds idle and walk. Bottles cyan/red/yellow readable. Idle may show a 4th blob (cork/buckle), not a fail this slice.
+- Jump still code-drawn. World/Arko still voxel, out of slice.
+
+
 ### 2026-08-30 - DONE - Hugo 463b9d5 Wonder idle+walk sprites in 8765
 - Commit: 463b9d5 (pushed)
 - Play: http://127.0.0.1:8765/?v=463b9d5
