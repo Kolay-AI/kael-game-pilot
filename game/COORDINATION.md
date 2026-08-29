@@ -35,6 +35,16 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - OPEN - Jumper sprite slice 2 (Kael jump/fall/land into 8765)
+- Assignee: Jumper (not Hugo, not Codex)
+- Base: a924184 (Hugo idle+walk). Do not rewrite idle/walk.
+- Files: extend Hugo's hero sprite pipeline for takeoff, jumpUp, doubleJump, fall, land
+- Goal: Wonder identity holds in the air. No new gameplay.
+- Identity: yellow band #f2ad24 two tails, jacket #1767a8, cream collar/cuffs #f3e4c2, pants #39733b to chunky boots (no tan shins), three belt bottles. Skin hands. Not Mario.
+- Codex: idle. Hugo: idle+walk done, do not take jump.
+- Done: SHA + play http://127.0.0.1:8765/?v=<sha>, tests green, report to Orion.
+
+
 ### 2026-08-30 - DONE - Hugo a924184 idle+walk in 8765
 - Commit: a924184
 - Play: http://127.0.0.1:8765/?v=a924184
