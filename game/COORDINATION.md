@@ -35,7 +35,15 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
-### 2026-08-30 - OPEN - Hugo sprite slice 1 (Kael idle+walk into 8765)
+### 2026-08-30 - DONE - Hugo a924184 idle+walk in 8765
+- Commit: a924184
+- Play: http://127.0.0.1:8765/?v=a924184
+- Tests: 83/83
+- Slice 1: Wonder idle+walk. Jump still code-drawn. Codex idle. Jumper gets jump when that agent exists.
+- Mira: playcheck opened.
+
+
+### 2026-08-30 - DONE - Hugo sprite slice 1 (Kael idle+walk into 8765)
 - Assignee: Hugo (not Codex)
 - Files: game/art.mjs and whatever sprite pipeline is needed
 - Playable today: 868c989 code-drawn. Wonder later-art is not in 8765 yet.
