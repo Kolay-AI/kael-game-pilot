@@ -35,6 +35,14 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Cycle-3 slice 1 Kael identity + walk 24 (Riven play sign-off)
+- Commit: e260fe3
+- Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
+- Tests: 80/80. Riven signed off in a 960x540 play frame: spawn stand (band+tail, wrap collar #f3e4c2, green pants to boot, chunky sole, belt bottles readable) then walk 24@24 (sagittal, planted support, no moonwalk, no sprint chain). Knot/folds in the draw; at play size collar/pants/sole are what read.
+- Off this pass: clouds 2784817, forest 1762008, HUD, boss, hills, P2, sprint. No sprites.
+- Next: No slice 2 until producer opens it. Codex still idle (next ticket TBD). Do not implement.
+
+
 ### 2026-08-29 - OPEN - Codex next ticket TBD (producer lock)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
