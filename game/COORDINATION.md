@@ -35,6 +35,18 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Clouds puffy blobs (Riven play sign-off)
+- Commit: 2784817
+- Files: game/art.mjs game/tests/art-upgrade.test.mjs
+- Tests: 79/79. Riven signed off in a 960x540 spawn frame (cam 0): cloud() is 3 overlapping puffy blobs, not stacked boxes. 8 clouds, wrap, parallax .04 kept. Forest/pit/sky/mountains/hills/dirt/grass/Walk/Kael/HUD/cursedShell off that pass.
+- Next: Forest leftover is a separate ticket (1762008). Do not reopen cloud().
+
+### 2026-08-29 - OPEN - Forest leaf masses hang down trunk (playcheck)
+- Commit: 1762008
+- Files: game/art.mjs game/tests/art-upgrade.test.mjs
+- Tests: 80/80. Same .37 loop only. 3 masses grown down (lowest cy+132) so hill 42x48 boxes at y 352-418 sit behind foliage. Hills loop untouched. Clouds 2784817 kept.
+- Next: Mira + Riven play-pixel spawn cam 0 at http://127.0.0.1:8765/?v=1762008 (hard reload). Sign if green rectangles on trunks are gone. Orion marks DONE only after that playcheck.
+
 ### 2026-08-29 - DONE - Forest canopies leaf blobs (Riven play sign-off)
 - Commit: ad03345
 - Files: game/art.mjs game/tests/art-upgrade.test.mjs
