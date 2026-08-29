@@ -136,8 +136,14 @@ const wonderLand=typeof Image==='function'?Object.assign(new Image(),{src:new UR
 function drawWonderKael(g,pose,frame,motion){
  const img=pose==='walk'?wonderWalk:pose==='takeoff'?wonderTakeoff:pose==='jumpUp'?wonderJumpUp:pose==='doubleJump'?wonderDoubleJump:pose==='fall'?wonderFall:pose==='land'?wonderLand:wonderIdle;
  if(!img||!img.complete||!img.naturalWidth)return false;
- const bob=pose==='walk'?Math.round(Math.abs(Math.sin((frame%24)/24*Math.PI*2))*3):pose==='idle'?Math.round((motion&&motion.upperY||0)*0.35):0;
- const H=90,W=Math.max(1,Math.round(img.naturalWidth*(H/img.naturalHeight)));
+ const H=90;
+ if(pose==='walk'){
+  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=Math.floor((frame%24)/3)%cells;
+  const W=Math.max(1,Math.round(cw*(H/ch)));
+  g.imageSmoothingEnabled=true;g.drawImage(img,fi*cw,0,cw,ch,Math.round(-W/2),-H,W,H);return true;
+ }
+ const bob=pose==='idle'?Math.round((motion&&motion.upperY||0)*0.35):0;
+ const W=Math.max(1,Math.round(img.naturalWidth*(H/img.naturalHeight)));
  g.imageSmoothingEnabled=true;g.drawImage(img,Math.round(-W/2),Math.round(-H+bob),W,H);return true;
 }
 export function drawKaelArt(g,cx,foot,face,pose,frame,phase,motion){g.save();g.translate(Math.round(cx),Math.round(foot));g.scale(face,1);const m=motion||{};if((pose==='idle'||pose==='walk'||pose==='takeoff'||pose==='jumpUp'||pose==='doubleJump'||pose==='fall'||pose==='land')&&drawWonderKael(g,pose,frame,m));else drawKaelCompletePose(g,face,pose,frame,phase,m);g.restore();return}
