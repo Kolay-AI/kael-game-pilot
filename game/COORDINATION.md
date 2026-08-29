@@ -35,6 +35,15 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder tone (Nox)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Lock: Claymation is material, not a Nintendo quote. Curse sits on the beauty: shells feel closed, forest too still, mountain looks like a picture book on purpose. Liberation = the diorama is right again (Danke!/Frei!), not kill fireworks. Copy words: Wald, Hang, Hülle, Buch, Adler. Never pipes, Wonder-flowers, franchise. Idle voice stays. Thief/book origin still parked.
+- Codex: do not implement story/copy. No sprites.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder audio mood (Auron)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
