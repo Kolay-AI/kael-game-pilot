@@ -35,6 +35,11 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Hills-loop 42x48 parked (producer lock)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Next: Codex note only. Do not recast the hills loop. 42x48 boxes remain far-layer; occluded at spawn after forest 1762008. Not a ticket. Cycle-2 spawn art stays closed (identity skip, forest 1762008, clouds 2784817). No new art ticket unless producer opens one.
 ### 2026-08-29 - DONE - Forest leaf masses hang down trunk (Riven play sign-off)
 - Commit: 1762008
 - Files: game/art.mjs game/tests/art-upgrade.test.mjs
