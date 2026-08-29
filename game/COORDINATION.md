@@ -35,6 +35,16 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - DONE - Hugo 463b9d5 Wonder idle+walk sprites in 8765
+- Commit: 463b9d5 (pushed)
+- Play: http://127.0.0.1:8765/?v=463b9d5
+- Tests: 84/84
+- Files: game/sprites/kael-idle.png, game/sprites/kael-walk.png, art.mjs drawWonderKael for idle+walk only
+- a924184 stays rejected
+- Jump still code-drawn. Jumper HOLD lifted, base is 463b9d5
+- Mira: playcheck opened on 463b9d5 (must not look like a924184)
+
+
 ### 2026-08-30 - BLOCKED - Hugo a924184 rejected (not Wonder in 8765)
 - Commit: a924184 is an 8-line code-drawn tweak, not later-art sprites. User sees no visual change.
 - Hugo: redo Slice 1. Idle+walk must read as the Wonder sheets, not a denser SNES Kael.
