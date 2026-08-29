@@ -35,13 +35,19 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Forest leaf masses hang down trunk (Riven play sign-off)
+- Commit: 1762008
+- Files: game/art.mjs game/tests/art-upgrade.test.mjs
+- Tests: 80/80. Riven signed off in a 960x540 spawn frame (cam 0): 3 masses hang down the trunk. Hill 42x48 boxes on the trunks gone. Same .37 loop. Hills loop untouched. Clouds stay 2784817.
+- Next: Cycle-2 spawn art closed (identity skip, forest, clouds). No new art ticket unless producer opens one. Not Wonder. Not sprites.
+
 ### 2026-08-29 - DONE - Clouds puffy blobs (Riven play sign-off)
 - Commit: 2784817
 - Files: game/art.mjs game/tests/art-upgrade.test.mjs
 - Tests: 79/79. Riven signed off in a 960x540 spawn frame (cam 0): cloud() is 3 overlapping puffy blobs, not stacked boxes. 8 clouds, wrap, parallax .04 kept. Forest/pit/sky/mountains/hills/dirt/grass/Walk/Kael/HUD/cursedShell off that pass.
 - Next: Forest leftover is a separate ticket (1762008). Do not reopen cloud().
 
-### 2026-08-29 - OPEN - Forest leaf masses hang down trunk (playcheck)
+### 2026-08-29 - DONE - Forest leaf masses hang down trunk (playcheck, superseded by sign-off below)
 - Commit: 1762008
 - Files: game/art.mjs game/tests/art-upgrade.test.mjs
 - Tests: 80/80. Same .37 loop only. 3 masses grown down (lowest cy+132) so hill 42x48 boxes at y 352-418 sit behind foliage. Hills loop untouched. Clouds 2784817 kept.
