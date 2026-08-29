@@ -35,6 +35,16 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - OPEN - Hugo sprite slice 1 (Kael idle+walk into 8765)
+- Assignee: Hugo (not Codex)
+- Files: game/art.mjs and whatever sprite pipeline is needed
+- Playable today: 868c989 code-drawn. Wonder later-art is not in 8765 yet.
+- Goal: Kael idle + walk in the locked Wonder 2.5D claymation look. Identity must hold in idle AND in motion. No jump/world/enemies this slice. No new gameplay.
+- Identity: yellow band #f2ad24 two tails, blue jacket #1767a8, cream collar/cuffs #f3e4c2, green pants #39733b to chunky brown boots (no tan shins), three belt bottles frost/ember/confusion. Skin hands, not gloves. Not Mario.
+- Codex: idle. Do not take this ticket.
+- Done: SHA + play link http://127.0.0.1:8765/?v=<sha>, tests green, report to Orion.
+
+
 ### 2026-08-29 - APPROVED - Wonder space sheets (Riven)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
