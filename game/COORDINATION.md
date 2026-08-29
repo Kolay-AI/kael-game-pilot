@@ -35,6 +35,22 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder play-reads (Vara)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Lock: Play at 960x540. Identity track = yellow band + blue jacket + boot mass (green pants may sink into grass). Silhouette: spiky hair, trailing band, cream collar, boot bricks. Collar may shrink in-play; belt bottles cannot. Chibi ok; Mario hat/overalls/gloves/coin-dot eyes not.
+- Bottles: frost cyan, ember red, confusion gold. Three on belt, never four. Distinct from jacket-blue and from ground flowers (flowers white/muted, no bottle hues). HUD selected bottle matches belt glow of same type.
+- Arko: white head + yellow beak + chunky talons. Perch = partner not power-up. Dive = short clay streak + talon-hit, then stun/flinch as now. Never tanooki tail or hat.
+- Pages: book-page silhouette, not flower/coin/Wonder-seed. One read at 32px: cream sheet + dark mark. Plants (heal/resource) are leaf-clumps, not bottles.
+- Curse vs freed: cursed = opaque shell, sick green/purple, HP pip. Freed = human/animal clay, Danke!/Frei!, walk-off. Liberation spark = shell-crack + green curse-cloud, not coin burst/stamp/stomp-kill. HP bars should not read as a kill-game.
+- Juice: squash/stretch on land and hit. Melee = clay impact not sparkle. Throw = bottle-shaped blob by type. Hit = white flash + knockback in one frame. No Wonder purple-sparkle on attacks.
+- Not Mario: no question blocks, coins, pipes, red/blue mushrooms, stamp cards, or collect-3-sparks. Wonder is material and camera, not the verb set. We free shells. We do not stomp.
+- Scale at 960x540: Kael ~56px. Belt bottles >= 6px color-locked. Arko dive >= 24px. Page >= 16px. Curse shell outline >= 2px vs grass. Play strip higher-contrast, less floral than lush BG.
+- Riven owns the look. These play-reads cannot drop. Codex: do not implement. No sprites.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder tone (Nox)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
