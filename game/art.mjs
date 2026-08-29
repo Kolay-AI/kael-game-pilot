@@ -126,7 +126,16 @@ function drawKaelCompletePose(g,face,pose,frame,phase,motion){
  const headTurned=runHead||turnHead,hairTufts=runHead?[[-18,-9,-7,-2],[-10,-15,0,-4],[0,-16,9,-4],[9,-10,18,-1]]:turnHead?[[-18,-10,-7,-2],[-10,-15,0,-4],[0,-16,9,-4],[9,-10,18,-1]]:[[-18,-10,-6,-3],[-10,-15,0,-4],[0,-16,9,-4],[9,-10,17,-2]],hairShift=headTurned?headShift:0;for(const q of hairTufts)poly(g,[[q[0]+hairShift,headY+q[1]],[q[2]+hairShift,headY+q[1]-5],[q[2]+3+hairShift,headY+q[3]],[q[0]+4+hairShift,headY+q[3]]],P.hairD);px(g,-10+hairShift,headY-13,18,4,P.hairL);
 }
 
-export function drawKaelArt(g,cx,foot,face,pose,frame,phase,motion){g.save();g.translate(Math.round(cx),Math.round(foot));g.scale(face,1);drawKaelCompletePose(g,face,pose,frame,phase,motion||{});g.restore();return}
+const wonderIdle=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-idle.png',import.meta.url).href}):null;
+const wonderWalk=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-walk.png',import.meta.url).href}):null;
+function drawWonderKael(g,pose,frame,motion){
+ const img=pose==='walk'?wonderWalk:wonderIdle;
+ if(!img||!img.complete||!img.naturalWidth)return false;
+ const bob=pose==='walk'?Math.round(Math.abs(Math.sin((frame%24)/24*Math.PI*2))*3):Math.round((motion&&motion.upperY||0)*0.35);
+ const H=90,W=Math.max(1,Math.round(img.naturalWidth*(H/img.naturalHeight)));
+ g.imageSmoothingEnabled=true;g.drawImage(img,Math.round(-W/2),Math.round(-H+bob),W,H);return true;
+}
+export function drawKaelArt(g,cx,foot,face,pose,frame,phase,motion){g.save();g.translate(Math.round(cx),Math.round(foot));g.scale(face,1);const m=motion||{};if((pose==='idle'||pose==='walk')&&drawWonderKael(g,pose,frame,m));else drawKaelCompletePose(g,face,pose,frame,phase,m);g.restore();return}
 /* legacy renderer retained for reference only; inactive in the runtime
  // articulated legs and oversized boots, kept planted at y=0
  const leg=(side,dx,dy,back)=>{const lx=side+dx;blob(g,[[lx-5,-31+dy],[lx-3,-35+dy],[lx+6,-34+dy],[lx+7,-27+dy],[lx+5,-16+dy],[lx-4,-14+dy],[lx-7,-20+dy]],back?'#2d6134':P.green,P.o);px(g,lx-2,-22+dy,6,3,'#2c6a3c');const bx=side-4+dx,by=-14+dy;blob(g,[[bx-3,by+2],[bx+1,by-1],[bx+14,by],[bx+18,by+5],[bx+16,by+12],[bx+11,by+14],[bx-3,by+13],[bx-6,by+8]],P.leather,P.o);px(g,bx+3,by+2,11,3,P.leatherL);px(g,bx-1,by+11,17,3,P.o);px(g,bx+12,by+5,4,4,P.metal);px(g,bx+2,by+12,3,2,P.yellow);px(g,bx+8,by+12,3,2,P.yellow)};leg(-9,L[0],L[1],true);leg(3,L[2],L[3],false);
