@@ -35,6 +35,19 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder QA gate (Mira)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs; playtest only after sprites land in 8765
+- Lock: 868c989 stays the playable code-drawn build. No Wonder sprite playtest until a SHA is in 8765.
+- FAIL if any pose drops identity (idle/walk/jump/fall/doubleJump/melee/throw/hit/crouch): yellow band + two tails, blue jacket + cream collar/cuffs, green pants to chunky brown boots (no tan shins), belt with cyan/red/yellow bottles.
+- FAIL if it reads as Mario (red cap, overalls, mustache, red/blue Nintendo silhouette).
+- FAIL if unreadable at 960x540: curse-shell vs freed form, bottle type (frost/ember/confusion) in throw, Arko as bird (ready vs dim on cooldown).
+- PASS only if identity holds in idle AND in the air, clay/Wonder read (round, toy, not SNES boxes), and bottles/Arko/curse/freed are distinguishable at canvas size.
+- Codex: do not implement sprites. No playcheck ticket until a sprite SHA exists.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder level-art spaces (Kira)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
