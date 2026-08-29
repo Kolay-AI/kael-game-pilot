@@ -139,9 +139,10 @@ function drawWonderKael(g,pose,frame,motion){
  if(!img||!img.complete||!img.naturalWidth)return false;
  const H=90;
  if(pose==='walk'||pose==='melee'){
-  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=pose==='walk'?Math.floor((frame%24)/3)%cells:Math.min(cells-1,frame%cells);
-  const W=Math.max(1,Math.round(cw*(H/ch)));
-  g.imageSmoothingEnabled=true;g.drawImage(img,fi*cw,0,cw,ch,Math.round(-W/2),-H,W,H);return true;
+  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=pose==='walk'?Math.floor((frame%24)/3)%cells:Math.min(cells-1,frame%cells),inset=2;
+  const sx=fi*cw+inset,sy=inset,sw=cw-inset*2,sh=ch-inset*2;
+  const W=Math.max(1,Math.round(sw*(H/sh)));
+  g.imageSmoothingEnabled=true;g.drawImage(img,sx,sy,sw,sh,Math.round(-W/2),-H,W,H);return true;
  }
  const bob=pose==='idle'?Math.round((motion&&motion.upperY||0)*0.35):0;
  const W=Math.max(1,Math.round(img.naturalWidth*(H/img.naturalHeight)));
