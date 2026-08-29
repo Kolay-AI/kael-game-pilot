@@ -35,6 +35,20 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder level-art spaces (Kira)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Lock: Later-art space map only. P2 coordinates stay. No code, no new pass.
+- Read grammar: walkable = yellow dirt + green shell-lip + thick brown clay cut. The lip is the jump silhouette. Play strip sharp; mid/BG tilt-shift soft. No box-hills: loaves and hills only.
+- Spawn 80-530 = the plate. Forest room, dirt band, fences as depth not collision. Puffy tree wall keeps the path readable. Berg der Verdammten already sits here as a haze snow-peak on the horizon (promise, not playable).
+- Pits 700, 1320, 2130, 3150, 4130: missing piece of the same loaf, not a black rectangle. Lip breaks, cut looks into the gap, shadow in the void, opposite lip same shell + clay crumbs. See-through to haze hills. Width stays locked (~120-130). First jump single. A DJ-only gap (P3) is a wider missing loaf, not a taller box.
+- High plats: same loaves, round, slightly set into the tree layer. Pages sit on the loaf, not on a box-stair.
+- Path to the mountain: background of this pass only. LTR forest thins from ~3150, peak grows. Corridor 3150-4300 reads as forest-ends. Gate = forest edge. Arena slab locked. Mountain behind as goal, no climb.
+- Codex: do not implement. No sprites, no geometry change.
+- Next: specialists keep creating the look. No game-code.
+
+
 ### 2026-08-29 - APPROVED - Wonder play-reads (Vara)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
