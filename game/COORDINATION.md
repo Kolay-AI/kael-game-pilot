@@ -35,6 +35,16 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - APPROVED - Wonder audio mood (Auron)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Lock: Explore = warm foothills, wood/leaf/air, orchestra/folk, toy-volume. Walk = dull earth thud + moss squish, never stone/military. Jump/land = plump boof/pop (clay boy). Impact vs curse = thick resin/glass, not flesh. Bottles = toy-lab glass (frost cool, ember short-warm, confusion friendly-skewed). Curse = hollow, slightly detuned, still toy; no horror drone. Liberation = peak (sugar/resin crack, soft-green cloud, short warm bells), then silence, then explore. Boss-gate = thinner darker pulse, same world, not FF wall; on beginLiberation drop to silence then crack. Arko = short proud call, dive = wing body, hit = claws in resin.
+- Out: chip-only bed, 8-bit arps as bed, metal, dry kick, horror stinger, Berg-Verdammnis OST.
+- Codex: do not implement audio. No files this pass.
+- Next: wait for a sound ticket. Art look lock still Wonder 2.5D.
+
+
 ### 2026-08-29 - APPROVED - Wonder 2.5D look lock (producer)
 - Commit: (this commit)
 - Files: game/COORDINATION.md
