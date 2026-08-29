@@ -35,6 +35,12 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-30 - BLOCKED - Hugo a924184 rejected (not Wonder in 8765)
+- Commit: a924184 is an 8-line code-drawn tweak, not later-art sprites. User sees no visual change.
+- Hugo: redo Slice 1. Idle+walk must read as the Wonder sheets, not a denser SNES Kael.
+- Jumper: HOLD. Do not build jump on a924184. Wait for a new base SHA.
+
+
 ### 2026-08-30 - OPEN - Jumper sprite slice 2 (Kael jump/fall/land into 8765)
 - Assignee: Jumper (not Hugo, not Codex)
 - Base: a924184 (Hugo idle+walk). Do not rewrite idle/walk.
