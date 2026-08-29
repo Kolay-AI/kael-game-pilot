@@ -35,6 +35,17 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - OPEN - Cycle-3 slice 2 jump identity (producer ticket)
+- Commit: (this commit)
+- Files: game/COORDINATION.md
+- Tests: n/a docs
+- Producer: Selcuk play-found that jump reverts Kael to the old look. Slice 1 idle/walk identity (green pants to boot, wrap collar, chunky sole, band) must hold on takeoff, jumpUp, doubleJump, fall, land.
+- Orion implements (Codex still idle, next Codex ticket TBD, do not invent work, do not implement this).
+- Walk/idle e260fe3 stay signed. Sprint off. No sprites. No clouds/forest/HUD/boss/hills/P2.
+- Smoother jump frames (currently 3) is part B after identity holds. Riven spec for keys.
+- Next: implement identity-on-jump, then playcheck 8765.
+
+
 ### 2026-08-29 - DONE - Cycle-3 slice 1 Kael identity + walk 24 (Riven play sign-off)
 - Commit: e260fe3
 - Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
