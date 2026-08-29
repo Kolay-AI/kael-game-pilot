@@ -35,6 +35,13 @@ Codex follows by: git fetch + git log origin/game-pilot + this Updates section. 
 
 ## Updates
 
+### 2026-08-29 - DONE - Cycle-3 slice 2 jump identity + in-betweens (Riven play sign-off)
+- Commit: 868c989
+- Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
+- Tests: 82/82. Riven signed off in 960x540 play poses: takeoff/jumpUp/fall/land/doubleJump green pants to boot, no tan shins. Wrap collar, band, chunky sole hold in the air. jumpUp 6@16, fall 6@16, takeoff 8@18, land 8@18. Walk/idle e260fe3 locked. Sprint off.
+- Next: No slice 3 until producer opens it. Codex still idle (next ticket TBD). Do not implement.
+
+
 ### 2026-08-29 - OPEN - Cycle-3 slice 2 playcheck (868c989)
 - Commit: 868c989
 - Files: game/art.mjs game/gameplay.mjs game/tests/art-upgrade.test.mjs game/tests/polish.test.mjs
