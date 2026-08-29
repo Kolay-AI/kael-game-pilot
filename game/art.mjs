@@ -138,9 +138,15 @@ function drawWonderKael(g,pose,frame,motion){
  const img=pose==='melee'?wonderMelee:pose==='walk'?wonderWalk:pose==='takeoff'?wonderTakeoff:pose==='jumpUp'?wonderJumpUp:pose==='doubleJump'?wonderDoubleJump:pose==='fall'?wonderFall:pose==='land'?wonderLand:wonderIdle;
  if(!img||!img.complete||!img.naturalWidth)return false;
  const H=90;
- if(pose==='walk'||pose==='melee'){
-  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=pose==='walk'?Math.floor((frame%24)/3)%cells:Math.min(cells-1,frame%cells),inset=2;
+ if(pose==='walk'){
+  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=Math.floor((frame%24)/3)%cells,inset=2;
   const sx=fi*cw+inset,sy=inset,sw=cw-inset*2,sh=ch-inset*2;
+  const W=Math.max(1,Math.round(sw*(H/sh)));
+  g.imageSmoothingEnabled=true;g.drawImage(img,sx,sy,sw,sh,Math.round(-W/2),-H,W,H);return true;
+ }
+ if(pose==='melee'){
+  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=Math.min(cells-1,frame%cells);
+  const sx=fi*cw,sy=0,sw=cw,sh=ch;
   const W=Math.max(1,Math.round(sw*(H/sh)));
   g.imageSmoothingEnabled=true;g.drawImage(img,sx,sy,sw,sh,Math.round(-W/2),-H,W,H);return true;
  }
