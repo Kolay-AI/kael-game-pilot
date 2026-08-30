@@ -81,9 +81,11 @@ function drawKaelCompletePose(g,face,pose,frame,phase,motion){
  // Translate the complete articulated body before drawing the legs. This
  // makes the hip roots, belt, torso, and feet share one moving pelvis anchor.
  const hemLag=(pose==='walk'||runPose)?-Math.round(Math.max(-2,Math.min(2,(L[0]||0)/9))):0;/* 1-2px jacket/pants hem lag opposite the stepping hip */
+ const contactShadow=(x,dx,dy)=>{if(!(pose==='walk'||runPose))return;const plant=Math.max(0,Math.min(1,1+(dy||0)/10));if(plant<.18)return;const bx=Math.round(x+dx*(runPose?.45:.42)),w=Math.round(6+plant*6),h=plant>.6?3:2;px(g,bx-w,1,w*2,h,'#241e18');if(plant>.6)px(g,bx-Math.round(w*.6),2,Math.round(w*1.2),1,'#100e0c')};/* animated contact shadows under grounded walk/sprint feet */
  g.translate(pelvisX, pelvisY);
  const runLegs=runPose?[L[0]-2,L[1],L[2]+3,L[3]]:L;
  const turnLegs=pose==='turn'?[L[0]-2,L[1]+1,L[2]+3,L[3]]:runLegs;
+ if(pose==='walk'||runPose){contactShadow(-8,turnLegs[0],turnLegs[1]);contactShadow(7,turnLegs[2],turnLegs[3]);}
  leg(-8,turnLegs[0],turnLegs[1],true); leg(7,turnLegs[2],turnLegs[3],false);
  const headbutt=pose==='melee'&&motion.comboStep===5;
  const combatTurn=isCombat?(phase==='windup'?-2:phase==='active'?5:2):0;
