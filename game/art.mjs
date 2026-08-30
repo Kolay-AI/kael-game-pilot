@@ -88,12 +88,10 @@ function drawKaelCompletePose(g,face,pose,frame,phase,motion){
  const combatTurn=isCombat?(phase==='windup'?-2:phase==='active'?5:2):0;
  const turnStage=pose==='turn'?Math.min(3,Math.max(0,frame)):0;
  const turnShift=pose==='turn'?[-1,0,2,4][turnStage]:0;
- const motionTime=Number.isFinite(motion.motionFrame)?motion.motionFrame:frame;
- const upperSway=pose==='idle'?Math.sin(frame*Math.PI/4)*4.5:runPose?Math.sin(motionTime*Math.PI/6)*3.2:pose==='turn'?Math.sin(turnStage*Math.PI/3)*1:0;
+ const upperSway=pose==='idle'?Math.sin(frame*Math.PI/4)*4.5:runPose?Math.sin(frame*Math.PI/6)*3.2:pose==='turn'?Math.sin(turnStage*Math.PI/3)*1:0;
  // The shared pelvis translation above keeps both thigh roots and the upper
  // body on the same support point during the right-run weight transfer.
- const renderUpperY=runPose?Math.sin(motionTime*Math.PI/6)*1.35:uy;
- g.translate(lean+combatTurn+turnShift+upperSway+(headbutt&&phase==='active'?3:0),anchoredIdle?0:renderUpperY+(idleSpecial?3:0));
+ g.translate(lean+combatTurn+turnShift+upperSway+(headbutt&&phase==='active'?3:0),anchoredIdle?0:uy+(idleSpecial?3:0));
  if(anchoredIdle)g.translate(0,upperBreath);
  // Right-run gets a readable forward silhouette while left-run keeps its
  // existing pose path. The belt and both thigh roots still share pelvisX/Y.
