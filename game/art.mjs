@@ -2,7 +2,7 @@ export const ART_MANIFEST=Object.freeze({
  nativeHeroBox:[52,82],outlinePixels:2,
  palettes:{outline:['#171827','#302033'],hair:['#482331','#743622','#a95428','#dc7940'],band:['#b96b18','#f2ad24','#ffe36b'],skin:['#7f402d','#c96e45','#f0a06d','#ffd0a0'],blue:['#123c72','#1767a8','#278ed1','#78c9e8'],green:['#24492e','#39733b','#65a545'],leather:['#3a2630','#70402c','#a66335','#db9251'],curse:['#18252b','#273a34','#48683c','#75c843','#b5f36b']},
  kaelFeatures:['wild-hair','yellow-headband-two-tails','face-eye-brow','short-blue-jacket-cream-collar','cream-cuffs','green-pants-to-boots','belt-buckle','three-alchemy-bottles','skin-hands','large-boots-soles'],
- frames:{idle:8,walk:24,sprint:12,takeoff:8,jumpUp:6,flip:16,fall:6,land:8,crouch:1,melee:8,throw:8,hit:5},
+ frames:{idle:8,walk:24,sprint:8,takeoff:8,jumpUp:6,flip:16,fall:6,land:8,crouch:1,melee:8,throw:8,hit:5},
  enemySilhouettes:['farmer-tool','quadruped-animal','wide-brute','horned-boss'],
  terrain:{tileSize:16,dirtVariants:3,edgeVariants:4},decor:{grass:4,flowers:3,bushes:2,rocks:3,trees:3,stumps:1},
  parallax:{clouds:.04,mountains:.11,hills:.23,forest:.37}
@@ -128,6 +128,7 @@ function drawKaelCompletePose(g,face,pose,frame,phase,motion){
 
 const wonderIdle=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-idle.png',import.meta.url).href}):null;
 const wonderWalk=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-walk.png',import.meta.url).href}):null;
+const wonderRun=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-run.png',import.meta.url).href}):null;
 const wonderMelee=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-melee.png',import.meta.url).href}):null;
 const wonderTakeoff=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-takeoff.png',import.meta.url).href}):null;
 const wonderJumpUp=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-jumpUp.png',import.meta.url).href}):null;
@@ -135,11 +136,17 @@ const wonderDoubleJump=typeof Image==='function'?Object.assign(new Image(),{src:
 const wonderFall=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-fall.png',import.meta.url).href}):null;
 const wonderLand=typeof Image==='function'?Object.assign(new Image(),{src:new URL('./sprites/kael-land.png',import.meta.url).href}):null;
 function drawWonderKael(g,pose,frame,motion){
- const img=pose==='melee'?wonderMelee:pose==='walk'?wonderWalk:pose==='takeoff'?wonderTakeoff:pose==='jumpUp'?wonderJumpUp:pose==='doubleJump'?wonderDoubleJump:pose==='fall'?wonderFall:pose==='land'?wonderLand:wonderIdle;
+ const img=pose==='melee'?wonderMelee:pose==='sprint'?wonderRun:pose==='walk'?wonderWalk:pose==='takeoff'?wonderTakeoff:pose==='jumpUp'?wonderJumpUp:pose==='doubleJump'?wonderDoubleJump:pose==='fall'?wonderFall:pose==='land'?wonderLand:wonderIdle;
  if(!img||!img.complete||!img.naturalWidth)return false;
  const H=90;
  if(pose==='walk'){
   const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=Math.floor((frame%24)/3)%cells,inset=2;
+  const sx=fi*cw+inset,sy=inset,sw=cw-inset*2,sh=ch-inset*2;
+  const W=Math.max(1,Math.round(sw*(H/sh)));
+  g.imageSmoothingEnabled=true;g.drawImage(img,sx,sy,sw,sh,Math.round(-W/2),-H,W,H);return true;
+ }
+ if(pose==='sprint'){
+  const cells=8,cw=img.naturalWidth/cells,ch=img.naturalHeight,fi=frame%cells,inset=2;
   const sx=fi*cw+inset,sy=inset,sw=cw-inset*2,sh=ch-inset*2;
   const W=Math.max(1,Math.round(sw*(H/sh)));
   g.imageSmoothingEnabled=true;g.drawImage(img,sx,sy,sw,sh,Math.round(-W/2),-H,W,H);return true;
@@ -154,7 +161,7 @@ function drawWonderKael(g,pose,frame,motion){
  const W=Math.max(1,Math.round(img.naturalWidth*(H/img.naturalHeight)));
  g.imageSmoothingEnabled=true;g.drawImage(img,Math.round(-W/2),Math.round(-H+bob),W,H);return true;
 }
-export function drawKaelArt(g,cx,foot,face,pose,frame,phase,motion){g.save();g.translate(Math.round(cx),Math.round(foot));g.scale(face,1);const m=motion||{};if((pose==='idle'||pose==='walk'||pose==='melee'||pose==='takeoff'||pose==='jumpUp'||pose==='doubleJump'||pose==='fall'||pose==='land')&&drawWonderKael(g,pose,frame,m));else drawKaelCompletePose(g,face,pose,frame,phase,m);g.restore();return}
+export function drawKaelArt(g,cx,foot,face,pose,frame,phase,motion){g.save();g.translate(Math.round(cx),Math.round(foot));g.scale(face,1);const m=motion||{};if((pose==='idle'||pose==='walk'||pose==='sprint'||pose==='melee'||pose==='takeoff'||pose==='jumpUp'||pose==='doubleJump'||pose==='fall'||pose==='land')&&drawWonderKael(g,pose,frame,m));else drawKaelCompletePose(g,face,pose,frame,phase,m);g.restore();return}
 /* legacy renderer retained for reference only; inactive in the runtime
  // articulated legs and oversized boots, kept planted at y=0
  const leg=(side,dx,dy,back)=>{const lx=side+dx;blob(g,[[lx-5,-31+dy],[lx-3,-35+dy],[lx+6,-34+dy],[lx+7,-27+dy],[lx+5,-16+dy],[lx-4,-14+dy],[lx-7,-20+dy]],back?'#2d6134':P.green,P.o);px(g,lx-2,-22+dy,6,3,'#2c6a3c');const bx=side-4+dx,by=-14+dy;blob(g,[[bx-3,by+2],[bx+1,by-1],[bx+14,by],[bx+18,by+5],[bx+16,by+12],[bx+11,by+14],[bx-3,by+13],[bx-6,by+8]],P.leather,P.o);px(g,bx+3,by+2,11,3,P.leatherL);px(g,bx-1,by+11,17,3,P.o);px(g,bx+12,by+5,4,4,P.metal);px(g,bx+2,by+12,3,2,P.yellow);px(g,bx+8,by+12,3,2,P.yellow)};leg(-9,L[0],L[1],true);leg(3,L[2],L[3],false);
